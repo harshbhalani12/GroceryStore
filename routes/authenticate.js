@@ -20,9 +20,9 @@ module.exports = function(passport){
 	}));
 
 	//sign up
-	router.post('/signup', function(req,res,next){
-		passport.authenticate('local',function(err,)
-	});
+	// router.post('/signup', function(req,res,next){
+	// 	passport.authenticate('local',
+	// });
 	//log out
 	router.get('/signout', function(req, res) {
 		req.logout();

@@ -1,8 +1,8 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-var Post = mongoose.model('Post');
-
+//var Post = mongoose.model('Post');
+var User = mongoose.model('User');
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
@@ -25,68 +25,90 @@ function isAuthenticated (req, res, next) {
 //Register the authentication middleware
 router.use('/posts', isAuthenticated);
 
-router.route('/posts')
+
+router.route('/user')
+    .get(function(req,res){
+        var username = "testusername";
+        var password = "testpwd";
+        var firstName = "firstName";
+        var lastName = "lastName";
+        var status = true;
+        var user = new User({
+            email: username,
+            password: password,
+            firstName: firstName,
+            lastName: lastName,
+            status: status
+        });
+        user.save(function(err,user){
+            if(err){
+                return res.send(500,err);
+            }
+            return res.json(user);
+        });
+    });
+// router.route('/posts')
     
-    // return all posts
-    .get(function(req,res){
-        Post.find(function(err,posts){
-            if(err){
-                return res.send(500,err);
-            }
-            return res.send(posts);
-        });
-    })
-    .post(function(req,res){
-        var post = new Post();
-        post.text = req.body.text;
-        post.username = req.body.created_by;
-        post.save(function(err,post){
-            if(err){
-                return res.send(500,err);
-            }
-            return res.json(post);
-        });
-    });
+//     // return all posts
+//     .get(function(req,res){
+//         Post.find(function(err,posts){
+//             if(err){
+//                 return res.send(500,err);
+//             }
+//             return res.send(posts);
+//         });
+//     })
+//     .post(function(req,res){
+//         var post = new Post();
+//         post.text = req.body.text;
+//         post.username = req.body.created_by;
+//         post.save(function(err,post){
+//             if(err){
+//                 return res.send(500,err);
+//             }
+//             return res.json(post);
+//         });
+//     });
 
-router.route('/posts/:id')
+// router.route('/posts/:id')
 
-    // Return a particular post
-    .get(function(req,res){
-        Post.findById(req.params.id,function(err,post){
-            if(err){
-                res.send(err);
-            }
-            res.json(post);
-        });
-    })
+//     // Return a particular post
+//     .get(function(req,res){
+//         Post.findById(req.params.id,function(err,post){
+//             if(err){
+//                 res.send(err);
+//             }
+//             res.json(post);
+//         });
+//     })
 
-    // Update existing post
-    .put(function(req,res){
-        Post.findById(req.params.id,function(err,post){
-            if(err){
-                res.send(err);
-            }
-            post.username = req.body.created_by;
-            post.text = req.body.text;
-            post.save(function(err,post){
-                if(err){
-                    res.send(err);
-                }
-                res.json(post);
-            });
-        });
-    })
+//     // Update existing post
+//     .put(function(req,res){
+//         Post.findById(req.params.id,function(err,post){
+//             if(err){
+//                 res.send(err);
+//             }
+//             post.username = req.body.created_by;
+//             post.text = req.body.text;
+//             post.save(function(err,post){
+//                 if(err){
+//                     res.send(err);
+//                 }
+//                 res.json(post);
+//             });
+//         });
+//     })
 
-    // Delete existing post
-    .delete(function(req,res){
-        Post.remove({
-            _id: req.params.id
-        },function(err){
-            if(err){
-                res.send(err);
-            }
-            res.json("deleted :(");
-        });
-    });
+//     // Delete existing post
+//     .delete(function(req,res){
+//         Post.remove({
+//             _id: req.params.id
+//         },function(err){
+//             if(err){
+//                 res.send(err);
+//             }
+//             res.json("deleted :(");
+//         });
+//     });
 
 module.exports = router;
