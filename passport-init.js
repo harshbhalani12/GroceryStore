@@ -33,9 +33,8 @@ module.exports = function(passport){
 	passport.use('login', new LocalStrategy({
 			passReqToCallback : true
 		},
-		function(req, username, password, done) { 
-            
-            User.findOne({username: username},
+		function(req, email, password, done) { 
+            User.findOne({email: email},
                 function(err, user){
                     if(err){
                         return done(err,false);
@@ -43,7 +42,7 @@ module.exports = function(passport){
 
                     //no user with given username
                     if(!user){
-                        return done('user' + username +'not found!',false);
+                        return done('user' + email +'not found!',false);
                     }
                     
                     if(!isValidPassword(user,password)){
@@ -56,42 +55,9 @@ module.exports = function(passport){
                     
             });
     }));
-
-	passport.use('signup', new LocalStrategy({
-			passReqToCallback : true // allows us to pass back the entire request to the callback
-		},
-		function(req, username, password, done) {
-
-            User.findOne({username: username},
-                function(err,user){
-                    if(err){
-                        return done(err,false);
-                    }
-                    if(user){
-                        // we have already signed user up (user found)
-                        return done(null,false);
-                    }
-                    var user = new User();
-                    
-                    user.username = username;
-                    user.password = createHash(password);
-                    user.save(function(err,user){
-                        if(err){
-                            return done(err, false);
-                        }
-                        console.log("Successfully signed up user "+username);
-                        return done(null,user);
-                    });
-            });
-		})
-	);
 	
 	var isValidPassword = function(user, password){
 		return bCrypt.compareSync(password, user.password);
-	};
-	// Generates hash using bCrypt
-	var createHash = function(password){
-		return bCrypt.hashSync(password, bCrypt.genSaltSync(10), null);
 	};
 
 };

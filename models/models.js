@@ -5,8 +5,7 @@ var Schema = mongoose.Schema;
 var userSchema = new mongoose.Schema({
     email: String,
     password: String, // hash for password
-    firstName: String,
-    lastName: String,
+    name : String,
     status: Boolean
 });
 
@@ -17,7 +16,7 @@ var productSchema = new mongoose.Schema({
 });
 
 var categorySchema = new mongoose.Schema({
-    name: String,
+    name: String
 });
 
 var purchaseRecord = new mongoose.Schema({
