@@ -6,21 +6,11 @@ var User = mongoose.model('User');
 
 module.exports = function(passport){
 
-	//sends successful login state back to angular
-	router.get('/success', function(req, res){
-		res.send({state: 'success', user: req.user ? req.user : null});
-	});
-
-	//sends failure login state back to angular
-	router.get('/failure', function(req, res){
-		res.send({state: 'failure', user: null});
-	});
-
 	//log in
-	router.post('/login', passport.authenticate('login', {
-		successRedirect: '/auth/success',
-		failureRedirect: '/auth/failure'
-	}));
+	router.post('/login', passport.authenticate('login'),
+		function(req,res){
+			return res.json({state: true,email: req.user.email});
+	});
 
 	//sign up
 	router.post('/signup', function(req,res){

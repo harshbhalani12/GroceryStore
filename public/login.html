@@ -205,8 +205,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 				  <div class="form">
 					<h2>Login to your account</h2>
 					<form ng-submit="login()" method="post">
-					  <input type="email" name="Email" placeholder="Email" required=" ">
-					  <input type="password" name="Password" placeholder="Password" required=" ">
+					  <input type="email" name="Email" placeholder="Email" required=" " ng-model="user.email">
+					  <input type="password" name="Password" placeholder="Password" required=" " ng-model="user.password">
 					  <input type="submit" value="Login">
 					</form>
 				  </div>

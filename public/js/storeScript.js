@@ -24,22 +24,25 @@ app.config(function($routeProvider){
 		});
 });
 
-app.controller('authController', function($scope, $http, $rootScope, $location){
+app.controller('authController', function($scope, $http, $window, $rootScope){
   $scope.user = {email: '', password: ''};
 	$scope.error_message = '';
 	$scope.success_message = '';
 	console.log("Inside authController");
   $scope.login = function(){
-    $http.post('/auth/login', $scope.user).success(function(response){
-      if(data.state == true){
+    $http.post('/auth/login', $scope.user).then(function success(response){
+      if(response.data.state == true){
         $rootScope.authenticated = true;
-        $rootScope.current_user = response.data.email;
-				$location.path('/');
+				$rootScope.current_user = response.data.email;
+				console.log("Login successful, in angular");
+				$window.location.href= '/';
       }
       else{
         $scope.error_message = response.data.message;
       }
-    });
+		}, function error(error){
+			$scope.error_message = error;
+		});
   };
 
   $scope.register = function(){

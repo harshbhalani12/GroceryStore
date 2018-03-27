@@ -31,10 +31,11 @@ module.exports = function(passport){
 	});
 
 	passport.use('login', new LocalStrategy({
+            usernameField: 'email',
 			passReqToCallback : true
 		},
-		function(req, email, password, done) { 
-            User.findOne({email: email},
+		function(req, username, password, done) { 
+            User.findOne({email: username},
                 function(err, user){
                     if(err){
                         return done(err,false);
@@ -42,7 +43,7 @@ module.exports = function(passport){
 
                     //no user with given username
                     if(!user){
-                        return done('user' + email +'not found!',false);
+                        return done('user' + username +'not found!',false);
                     }
                     
                     if(!isValidPassword(user,password)){
