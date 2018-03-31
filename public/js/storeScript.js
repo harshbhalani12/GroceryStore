@@ -1,41 +1,47 @@
-var app = angular.module('groceryStore', ['ngRoute']).run(function($http,$rootScope) {
-	$rootScope.authenticated = false;
-	$rootScope.current_user = '';
-	
-	$rootScope.signout = function(){
-    	$http.get('auth/signout');
-    	$rootScope.authenticated = false;
-    	$rootScope.current_user = '';
-	};
-});
-
+var app = angular.module('groceryStore', ['ngRoute']);
 
 app.config(function($routeProvider){
 	$routeProvider
 		//the timeline display
-		.when('/', {
-			templateUrl: 'index.html',
+		.when('/',{
+			template: '<p>Hi</p>',
 			controller: 'mainController'
 		})
-		//the login display
 		.when('/login', {
 			templateUrl: 'login.html',
+			controller: 'authController'
+		})
+		.when('/register',{
+			templateUrl: 'register.html',
 			controller: 'authController'
 		});
 });
 
-app.controller('authController', function($scope, $http, $window, $rootScope){
+app.controller('mainController',function($scope,$rootScope,$http){
+	$http.get('/api/isAuthenticated').then(function success(response){
+		if(response.data.authenticated == true){
+			console.log("User is authenticated!");
+			$scope.authenticated = true;
+		}
+	});
+	
+	$scope.signout = function(){
+			$http.get('auth/signout');
+    	$scope.authenticated = false;
+	}
+});
+
+app.controller('authController', function($scope, $http, $location, $rootScope,msgService){
   $scope.user = {email: '', password: ''};
 	$scope.error_message = '';
-	$scope.success_message = '';
-	console.log("Inside authController");
+  $scope.$watch(msgService.getSuccessMessage,function(message){
+    $scope.success_message=message;
+  });
   $scope.login = function(){
     $http.post('/auth/login', $scope.user).then(function success(response){
       if(response.data.state == true){
-        $rootScope.authenticated = true;
 				$rootScope.current_user = response.data.email;
-				console.log("Login successful, in angular");
-				$window.location.href= '/';
+				$location.path('/');
       }
       else{
         $scope.error_message = response.data.message;
@@ -49,9 +55,9 @@ app.controller('authController', function($scope, $http, $window, $rootScope){
 		console.log("Inside register");
     $http.post('/auth/signup', $scope.user).then(function success(response){
 			if(response.data.state == true){
-        $rootScope.authenticated = true;
 				$rootScope.current_user = response.data.email;
-				$scope.success_message = response.data.message;
+				msgService.setSuccessMessage(response.data.message);
+				$location.path('/login');
 			}
       else{
         $scope.error_message = response.data.message;
@@ -61,4 +67,16 @@ app.controller('authController', function($scope, $http, $window, $rootScope){
 				$scope.error_message = error;
 		});
   };
+});
+
+app.factory('msgService', function () {
+	var msg='';
+	return {
+			setSuccessMessage: function(m) {
+					msg=m;
+			},
+			getSuccessMessage: function() {
+					return msg;
+			}
+	};
 });

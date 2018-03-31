@@ -9,11 +9,6 @@ function isAuthenticated (req, res, next) {
 	// Passport adds this method to request object. A middleware is allowed to add properties to
 	// request and response objects
 
-    //allow all get request methods
-    
-	if(req.method === "GET"){
-		return next();
-	}
 	if (req.isAuthenticated()){
 		return next();
 	}
@@ -23,29 +18,12 @@ function isAuthenticated (req, res, next) {
 };
 
 //Register the authentication middleware
-router.use('/posts', isAuthenticated);
+// router.use('/', isAuthenticated);
 
 
-router.route('/user')
+router.route('/isAuthenticated')
     .get(function(req,res){
-        var username = "testusername";
-        var password = "testpwd";
-        var firstName = "firstName";
-        var lastName = "lastName";
-        var status = true;
-        var user = new User({
-            email: username,
-            password: password,
-            firstName: firstName,
-            lastName: lastName,
-            status: status
-        });
-        user.save(function(err,user){
-            if(err){
-                return res.send(500,err);
-            }
-            return res.json(user);
-        });
+        return res.json({'authenticated':req.isAuthenticated()});
     });
 // router.route('/posts')
     

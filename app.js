@@ -6,7 +6,6 @@ var session = require('express-session');
 var passport = require('passport');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
-var flash    = require('connect-flash');
 
 // Require models for passport init
 require('./models/models.js');
@@ -29,8 +28,8 @@ app.set('view engine', 'ejs');
 app.use(logger('dev'));
 app.use(session({
   secret: 'keyboard cat',
-  resave: true,
-  saveUninitialized: true
+  resave: false,
+  saveUninitialized: false
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -38,7 +37,6 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(flash());
 
 //Initialize Passport
 var initPassport = require('./passport-init');
