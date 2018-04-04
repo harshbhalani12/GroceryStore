@@ -1,0 +1,18 @@
+<div class="w3_login">
+    <h3>Register</h3>
+    <div class="w3_login_module">
+        <div class="module form-module">
+            <span class='alert alert-danger' ng-if="error_message">{{error_message}}</span>
+            <div class="form">
+                <h2>Create an Account</h2>
+                <form ng-submit="register()" method="post">
+                    <input type="text" name="Name" placeholder="Name" required=" " ng-model="user.name">
+                    <input type="email" name="Email" placeholder="Email Address" required=" " ng-model="user.email">
+                    <input type="password" name="Password" placeholder="Password" required=" " ng-model="user.password" ng-change="checkPwdStrength()">
+                    <span ng-show = "strength_message">{{strength_message}}</span>
+                    <input type="submit" value="Register">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
