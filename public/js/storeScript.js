@@ -137,19 +137,20 @@ app.controller('authController', function($scope, $http, $location, $rootScope,m
 });
 
 app.factory('msgService', function () {
-	var msg='';
+	var successMsg='';
+	var errorMsg='';
 	return {
 			setSuccessMessage: function(m) {
-					msg=m;
+					successMsg=m;
 			},
 			getSuccessMessage: function() {
-					return msg;
+					return successMsg;
 			},
 			setErrorMessage: function(m){
-				msg=m;
+				errorMsg=m;
 			},
 			getErrorMessage: function(){
-				return msg;
+				return errorMsg;
 			}
 	};
 });
