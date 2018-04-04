@@ -6,7 +6,7 @@ var userSchema = new mongoose.Schema({
     email: String,
     password: String, // hash for password
     name : String,
-    status: Boolean
+    admin: Boolean
 });
 
 var productSchema = new mongoose.Schema({

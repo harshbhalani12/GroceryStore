@@ -13,7 +13,7 @@ module.exports = function(passport){
 		  if (!user) { return res.json({'state':false,'message':'Username and Password do not match.'}); }
 		  req.login(user, function(err) {
 			if (err) { return next(err); }
-			return res.json({'state':true,'name':user.name});
+			return res.json({'state':true,'name':user.name,'isAdmin':user.admin});
 		  });
 		})(req, res, next);
 	});
@@ -37,6 +37,7 @@ module.exports = function(passport){
 				user.name = name;
 				user.email = email;
 				user.password = createHash(password);
+				user.admin = false;
 				user.save(function(err,user){
 					if(err){
 						return res.send(err);

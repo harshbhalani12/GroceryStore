@@ -21,16 +21,20 @@ app.controller('mainController',function($scope,$http,authService){
 	$scope.$watch(authService.getAuthenticated, function(auth){
 		$scope.authenticated = auth;
 	});
+
+	$scope.$watch(authService.getIsAdmin,function(admin){
+		$scope.admin = admin;
+	});
 	
 	$scope.signout = function(){
 			$http.post('/auth/signout').then(function success(response){
-				authService.setAuthenticated(false);
+				authService.reset();
     			$scope.authenticated = false;
 		});
 	};
 });
 
-app.controller('authController', function($scope, $http, $location, $rootScope,msgService,authService){
+app.controller('authController', function($scope, $http, $location,msgService,authService){
 	$scope.user = {email: '', password: ''};
 	$scope.error_message = '';
 	$scope.strength_message = '';
@@ -43,8 +47,9 @@ app.controller('authController', function($scope, $http, $location, $rootScope,m
     $scope.login = function(){
     	$http.post('/auth/login', $scope.user).then(function success(response){
 				if(response.data.state == true){
-					$rootScope.current_user = response.data.name;
 					authService.setAuthenticated(true);
+					authService.setIsAdmin(response.data.isAdmin);
+					msgService.reset();
 					$location.path('/');
 				}
 				else{
@@ -59,7 +64,6 @@ app.controller('authController', function($scope, $http, $location, $rootScope,m
 		if($scope.isValidForm()){
 			$http.post('/auth/signup', $scope.user).then(function success(response){
 				if(response.data.state == true){
-					$rootScope.current_user = response.data.name;
 					msgService.setSuccessMessage(response.data.message);
 					$location.path('/login');
 				}
@@ -151,18 +155,32 @@ app.factory('msgService', function () {
 			},
 			getErrorMessage: function(){
 				return errorMsg;
+			},
+			reset: function(){
+				this.setSuccessMessage('');
+				this.setErrorMessage('');
 			}
 	};
 });
 
 app.factory('authService',function(){
-	var authenticated = false;
+	var authenticated = false, isAdmin = false;
 	return {
 		setAuthenticated: function(auth){
 			authenticated = auth;
 		},
 		getAuthenticated: function(){
 			return authenticated;
+		},
+		setIsAdmin: function(admin){
+			isAdmin = admin;
+		},
+		getIsAdmin: function(){
+			return isAdmin;
+		},
+		reset: function(){
+			this.setAuthenticated(false);
+			this.setIsAdmin(false);
 		}
 	}
 });
