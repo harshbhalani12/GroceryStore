@@ -7,9 +7,15 @@ var User = mongoose.model('User');
 module.exports = function(passport){
 
 	//log in
-	router.post('/login', passport.authenticate('login'),
-		function(req,res){
-			return res.json({state: true,email: req.user.email});
+	router.post('/login', function(req, res, next) {
+		passport.authenticate('login', function(err, user, info) {
+		  if (err) { return next(err); }
+		  if (!user) { return res.json({'state':false,'message':'Username and Password do not match.'}); }
+		  req.login(user, function(err) {
+			if (err) { return next(err); }
+			return res.json({'state':true,'name':user.name});
+		  });
+		})(req, res, next);
 	});
 
 	//sign up
@@ -35,19 +41,12 @@ module.exports = function(passport){
 					if(err){
 						return res.send(err);
 					}
-					req.login(user, function (err) {
-						if ( ! err ){
-							return res.json({"message":"Successfully signed up. Please login to start shopping!","state":true, email: email});
-						} else {
-							//handle error
-							return res.send(err);
-						}
-					})
+					return res.json({"message":"Successfully signed up. Please login to start shopping!","state":true, name: name});
 				});
 		});
 	});
 	//log out
-	router.get('/signout', function(req, res) {
+	router.post('/signout', function(req, res) {
 		req.logout();
 		res.redirect('/');
 	});

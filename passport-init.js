@@ -39,15 +39,9 @@ module.exports = function(passport){
                 function(err, user){
                     if(err){
                         return done(err,false);
-                    }
-
-                    //no user with given username
-                    if(!user){
-                        return done('user' + username +'not found!',false);
-                    }
+                    }                    
                     
-                    if(!isValidPassword(user,password)){
-                        console.log('Invalid password');
+                    if(!user || !isValidPassword(user,password)){
                         return done(null,false);
                     }
                     // successfully logged in

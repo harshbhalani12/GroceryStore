@@ -72,9 +72,9 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 					<div class="mega-dropdown-menu">
 						<div class="w3ls_vegetables">
 							<ul class="dropdown-menu drp-mnu">
-								<li ng-hide="authenticated"><a href="#!login">Login</a></li>
-								<li ng-hide="authenticated"><a href="#!register">Register</a></li>
-								<li ng-show="authenticated"><button ng-click="signout()">Signout</button></li>
+								<li ng-if="!authenticated"><a href="#!login">Login</a></li>
+								<li ng-if="!authenticated"><a href="#!register">Register</a></li>
+								<li ng-if="authenticated"><a href="" ng-click="signout()">Signout</a></li>
 							</ul>
 						</div>                  
 					</div>	
