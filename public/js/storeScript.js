@@ -1,4 +1,4 @@
-var app = angular.module('groceryStore', ['ngRoute']);
+var app = angular.module('groceryStore', ['ngRoute','ngResource','ngFileUpload']);
 
 app.config(function($routeProvider){
 	$routeProvider
@@ -14,6 +14,10 @@ app.config(function($routeProvider){
 		.when('/register',{
 			templateUrl: 'register.html',
 			controller: 'authController'
+		})
+		.when('/manage_products',{
+			templateUrl: 'manage_products.html',
+			controller: 'manageProductsCtrl'
 		});
 });
 
@@ -138,6 +142,21 @@ app.controller('authController', function($scope, $http, $location,msgService,au
 			return false;
 		}
 	}
+});
+
+app.controller('manageProductsCtrl',function($scope,$resource){
+	$scope.data = {
+		operations:[
+			{id:'1', name : 'Add'	},
+			{id:'2', name : 'Update'},
+			{id:'3', name : 'Delete'}
+		],
+		categories:[
+			{id: '1', name: 'Category1'},
+			{id: '2', name: 'Category2'},
+			{id: '3', name: 'Category3'}
+		]
+	};
 });
 
 app.factory('msgService', function () {

@@ -11,11 +11,12 @@ var userSchema = new mongoose.Schema({
 
 var productSchema = new mongoose.Schema({
     name: String,
-    image: String,
-    categoryID: { type: Schema.Types.ObjectId, ref: 'Category' }
+    image: { data: Buffer, contentType: String },
+    category: { categoryNumber: Number, name: String }
 });
 
 var categorySchema = new mongoose.Schema({
+    categoryNumber: Number,
     name: String
 });
 

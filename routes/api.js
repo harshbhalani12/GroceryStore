@@ -1,8 +1,9 @@
 var express = require('express');
 var router = express.Router();
 var mongoose = require('mongoose');
-//var Post = mongoose.model('Post');
+var Product = mongoose.model('Product');
 var User = mongoose.model('User');
+
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
@@ -24,7 +25,32 @@ function isAuthenticated (req, res, next) {
 router.route('/isAuthenticated')
     .get(function(req,res){
         return res.json({'authenticated':req.isAuthenticated()});
-    });
+	});
+	
+
+	// router.post('/products',upload.single('photoFile'),(req,res,next) => {
+	// 	console.log(req.body);
+	// 	console.log(req.file);  
+	// 	// Everything went fine 
+	//   });
+	//   // if(req.user.admin){
+	// 	  // console.log(req.body);
+	// 	  // console.log(req.file);
+	//   // }
+	//   // else{
+	// 	  // return res.json({'state': false, 'message':'You are not authorized to perform this operation!'});
+  
+
+router.route('/products')
+	.get(function(req,res){
+		Product.find(function(err,products){
+			if(err){
+				return res.send(500,err);
+			}
+			return res.json(products);
+		});	
+	})
+		// }
 // router.route('/posts')
     
 //     // return all posts
