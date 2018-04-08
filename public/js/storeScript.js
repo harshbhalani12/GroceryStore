@@ -1,4 +1,4 @@
-var app = angular.module('groceryStore', ['ngRoute','ngResource','ngFileUpload']);
+var app = angular.module('groceryStore', ['ngRoute','ngResource']);
 
 app.config(function($routeProvider){
 	$routeProvider
