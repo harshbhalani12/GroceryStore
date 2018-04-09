@@ -49,7 +49,7 @@ module.exports = function(passport){
 	//log out
 	router.post('/signout', function(req, res) {
 		req.logout();
-		res.redirect('/');
+		return res.json({'state':true});
 	});
 
 	// Creates hash of password using bCrypt

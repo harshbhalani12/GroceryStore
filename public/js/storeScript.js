@@ -21,7 +21,16 @@ app.config(function($routeProvider){
 		});
 });
 
-app.controller('mainController',function($scope,$http,authService){
+app.controller('mainController',function($scope,$http,$resource,$location,authService){
+	var User = $resource('/api/user');
+	User.get({},function(user){
+		if(user.name){
+			$scope.authenticated = true;
+			if(user.admin){
+				$scope.admin = true;
+			}
+		}
+	});
 	$scope.$watch(authService.getAuthenticated, function(auth){
 		$scope.authenticated = auth;
 	});
@@ -33,7 +42,9 @@ app.controller('mainController',function($scope,$http,authService){
 	$scope.signout = function(){
 			$http.post('/auth/signout').then(function success(response){
 				authService.reset();
-    			$scope.authenticated = false;
+				$scope.authenticated = false;
+				$scope.admin = false;
+				$location.path('/');
 		});
 	};
 });
@@ -144,7 +155,21 @@ app.controller('authController', function($scope, $http, $location,msgService,au
 	}
 });
 
-app.controller('manageProductsCtrl',function($scope,$resource){
+app.controller('manageProductsCtrl',function($scope,$resource,authService){
+	
+	$scope.$watch(authService.getAuthenticated, function(auth){
+		$scope.authenticated = auth;
+	});
+
+	$scope.$watch(authService.getIsAdmin,function(admin){
+		$scope.admin = admin;
+	});
+	
+	
+
+	console.log($scope.authenticated);
+	console.log($scope.admin);
+	
 	$scope.data = {
 		operations:[
 			{id:'1', name : 'Add'	},

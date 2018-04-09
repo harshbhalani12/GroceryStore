@@ -23,11 +23,13 @@ function isAuthenticated (req, res, next) {
 // router.use('/', isAuthenticated);
 
 
-router.route('/isAuthenticated')
+router.route('/user')
     .get(function(req,res){
-        return res.json({'authenticated':req.isAuthenticated()});
-	});
-	
+        if(req.user){
+            return res.json({'name':req.user.name,'admin':req.user.admin});
+        }
+        return res.json({});
+    });
 
 	// router.post('/products',upload.single('photoFile'),(req,res,next) => {
 	// 	console.log(req.body);
