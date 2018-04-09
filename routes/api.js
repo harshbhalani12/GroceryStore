@@ -4,6 +4,7 @@ var mongoose = require('mongoose');
 var Product = mongoose.model('Product');
 var User = mongoose.model('User');
 
+
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
 	// if user is authenticated in the session, call the next() to call the next request handler 
@@ -49,7 +50,81 @@ router.route('/products')
 			}
 			return res.json(products);
 		});	
-	})
+	});
+
+//for add product using multer
+var multer = require('multer');
+var multerConf = {
+  storage: multer.diskStorage({
+    destination: function(req,file,next){
+      next(null,'./public/images');
+    },
+    filename:function(req,file,next){
+      console.log(file);
+      const ext = file.mimetype.split('/')[1];
+      next(null,file.originalname.substring(0,file.originalname.lastIndexOf('.'))+'.'+ext);
+      //next(null,req.body.imgname+'.'+ext);
+    }
+  }),
+  fileFilter : function(req,file,next){
+      if(!file){
+          next();
+      }
+      const image = file.mimetype.startsWith('image/');
+      if(image){
+          next(null,true);
+      }else{
+          next({message:"file type not supported"},false);
+      }
+  }  
+}
+//add product
+mongoose.Promise = global.Promise;
+mongoose.connect('mongodb://utk:utk@ds221609.mlab.com:21609/utk');
+
+var productSchema = mongoose.Schema({
+    productName:{
+        type:String,
+        required : true
+    },
+    productCategory:{
+        type:String,
+        required : true
+    },
+    productPrice:{
+        type:String,
+        required : true
+    },
+    productImage:{
+        type:String,
+        required : true
+    }
+},{collection:'products'});
+var model = mongoose.model("products",productSchema);
+
+//router.post('/',multer(multerConf).single('productImage'),productCrud.addData);
+router.post('/',multer(multerConf).single('productImage'),function(req,res){
+	//res.send("hello in api.js");
+	var postBody = req.body;
+	console.log("post:"+req.file.originalname);
+    var data = {
+        productName: postBody.productName,
+        productCategory: postBody.productCategory,
+        productPrice: postBody.productPrice,
+        productImage: req.file.originalname
+	}
+	console.log(data);
+    var saveData = new model(data);
+
+    saveData.save(function(err,data1){
+        if(err){
+            res.send(err);
+        }else{
+			res.redirect('/#!manage_products');
+		}
+	});
+	
+});
 		// }
 // router.route('/posts')
     

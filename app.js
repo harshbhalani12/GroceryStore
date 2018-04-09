@@ -15,6 +15,7 @@ var api = require('./routes/api');
 var authenticate = require('./routes/authenticate')(passport);
 var mongoose = require('mongoose');
 
+
 // Connect to MongoDB
 mongoose.connect('mongodb://utk:utk@ds221609.mlab.com:21609/utk');
 var app = express();
