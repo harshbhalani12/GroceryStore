@@ -6,7 +6,7 @@
                 <div class="form">
                     <h2>Choose Action</h2>
                     <!-- control goes to api.js -->
-                    <form action="/api/" enctype="multipart/form-data" method="post"> 
+                    <form action="/api/products" enctype="multipart/form-data" method="post"> 
                         <select id="drop1" class="form-control" required=" " ng-model="operation" ng-options="option.name for option in data.operations track by option.id">
                                 <option value="" selected>Select Action</option>
                         </select><br/>

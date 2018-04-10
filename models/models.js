@@ -9,11 +9,24 @@ var userSchema = new mongoose.Schema({
     admin: Boolean
 });
 
-var productSchema = new mongoose.Schema({
-    name: String,
-    image: { data: Buffer, contentType: String },
-    category: { categoryNumber: Number, name: String }
-});
+var productSchema = mongoose.Schema({
+    productName:{
+        type:String,
+        required : true
+    },
+    productCategory:{
+        type:String,
+        required : true
+    },
+    productPrice:{
+        type:String,
+        required : true
+    },
+    productImage:{
+        type:String,
+        required : true
+    }
+},{collection:'products'});
 
 var categorySchema = new mongoose.Schema({
     categoryNumber: Number,

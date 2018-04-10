@@ -4,6 +4,35 @@ var mongoose = require('mongoose');
 var Product = mongoose.model('Product');
 var User = mongoose.model('User');
 
+mongoose.Promise = global.Promise;
+
+//for add product using multer
+var multer = require('multer');
+var multerConf = {
+  storage: multer.diskStorage({
+    destination: function(req,file,next){
+      next(null,'./public/images');
+    },
+    filename:function(req,file,next){
+      console.log(file);
+      const ext = file.mimetype.split('/')[1];
+      next(null,file.originalname.substring(0,file.originalname.lastIndexOf('.'))+'.'+ext);
+      //next(null,req.body.imgname+'.'+ext);
+    }
+  }),
+  fileFilter : function(req,file,next){
+      if(!file){
+          next();
+      }
+      const image = file.mimetype.startsWith('image/');
+      if(image){
+          next(null,true);
+      }else{
+          next({message:"file type not supported"},false);
+      }
+  }  
+};
+
 
 //Used for routes that must be authenticated.
 function isAuthenticated (req, res, next) {
@@ -52,60 +81,10 @@ router.route('/products')
 			}
 			return res.json(products);
 		});	
-	});
-
-//for add product using multer
-var multer = require('multer');
-var multerConf = {
-  storage: multer.diskStorage({
-    destination: function(req,file,next){
-      next(null,'./public/images');
-    },
-    filename:function(req,file,next){
-      console.log(file);
-      const ext = file.mimetype.split('/')[1];
-      next(null,file.originalname.substring(0,file.originalname.lastIndexOf('.'))+'.'+ext);
-      //next(null,req.body.imgname+'.'+ext);
-    }
-  }),
-  fileFilter : function(req,file,next){
-      if(!file){
-          next();
-      }
-      const image = file.mimetype.startsWith('image/');
-      if(image){
-          next(null,true);
-      }else{
-          next({message:"file type not supported"},false);
-      }
-  }  
-}
-//add product
-mongoose.Promise = global.Promise;
-mongoose.connect('mongodb://utk:utk@ds221609.mlab.com:21609/utk');
-
-var productSchema = mongoose.Schema({
-    productName:{
-        type:String,
-        required : true
-    },
-    productCategory:{
-        type:String,
-        required : true
-    },
-    productPrice:{
-        type:String,
-        required : true
-    },
-    productImage:{
-        type:String,
-        required : true
-    }
-},{collection:'products'});
-var model = mongoose.model("products",productSchema);
+    });
 
 //router.post('/',multer(multerConf).single('productImage'),productCrud.addData);
-router.post('/',multer(multerConf).single('productImage'),function(req,res){
+router.post('/products',multer(multerConf).single('productImage'),function(req,res){
 	//res.send("hello in api.js");
 	var postBody = req.body;
 	console.log("post:"+req.file.originalname);
@@ -115,10 +94,17 @@ router.post('/',multer(multerConf).single('productImage'),function(req,res){
         productPrice: postBody.productPrice,
         productImage: req.file.originalname
 	}
-	console.log(data);
-    var saveData = new model(data);
+    console.log(data);
+    
+    Product.find({},postBody.productName,function(err,products){
+        if(products.length > 0){
+            console.log("Update request!");
+        }
+    });
 
-    saveData.save(function(err,data1){
+    var saveData = new Product(data);
+
+    saveData.save(function(err,data){
         if(err){
             res.send(err);
         }else{
@@ -127,7 +113,7 @@ router.post('/',multer(multerConf).single('productImage'),function(req,res){
 	});
 	
 });
-		// }
+	// }
 // router.route('/posts')
     
 //     // return all posts

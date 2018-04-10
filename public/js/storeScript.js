@@ -165,11 +165,6 @@ app.controller('manageProductsCtrl',function($scope,$resource,authService){
 		$scope.admin = admin;
 	});
 	
-	
-
-	console.log($scope.authenticated);
-	console.log($scope.admin);
-	
 	$scope.data = {
 		operations:[
 			{id:'1', name : 'Add'	},
