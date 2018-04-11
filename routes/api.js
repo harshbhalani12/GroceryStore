@@ -85,22 +85,17 @@ router.route('/products')
 
 //router.post('/',multer(multerConf).single('productImage'),productCrud.addData);
 router.post('/products',multer(multerConf).single('productImage'),function(req,res){
-	//res.send("hello in api.js");
+    //res.send("hello in api.js");
 	var postBody = req.body;
 	console.log("post:"+req.file.originalname);
     var data = {
         productName: postBody.productName,
         productCategory: postBody.productCategory,
         productPrice: postBody.productPrice,
-        productImage: req.file.originalname
+        productImage: req.file.originalname,
+        stockQuantity: postBody.stockQuantity
 	}
     console.log(data);
-    
-    Product.find({},postBody.productName,function(err,products){
-        if(products.length > 0){
-            console.log("Update request!");
-        }
-    });
 
     var saveData = new Product(data);
 
@@ -112,6 +107,48 @@ router.post('/products',multer(multerConf).single('productImage'),function(req,r
 		}
 	});
 	
+});
+
+
+router.put('/products/:id',multer(multerConf).single('productImage'), function(req,res){
+    var putBody = req.body;
+    
+    console.log("put:"+req.file);
+    Product.findById(req.params.id,function(err,product){
+        if(err){
+            res.send(err);
+        }
+        product.productName =  putBody.productName;
+        product.productCategory =  putBody.productCategory;
+        product.productPrice = putBody.productPrice;
+        product.stockQuantity = putBody.stockQuantity;
+        req.file?product.productImage = req.file.originalname:{};
+        putBody.isDeleted?product.isDeleted = putBody.isDeleted:{};
+    
+        console.log(product);
+        product.save(function(err){
+            if(err){
+                res.send(err);
+            }
+            res.json({state: 'Updated Successfully!'});
+        });
+    });
+});
+
+router.delete('/products/:id',function(req,res){
+    Product.findById(req.params.id,function(err,product){
+        if(err){
+            res.send(err);
+        }
+        product.isDeleted = true;
+        product.save(function(err){
+            if(err){
+                res.send(err);
+            }
+            res.json({state: 'Safe delete complete'});
+        });
+        
+    });
 });
 	// }
 // router.route('/posts')

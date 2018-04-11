@@ -37,7 +37,6 @@ module.exports = function(passport){
 				user.name = name;
 				user.email = email;
 				user.password = createHash(password);
-				user.admin = false;
 				user.save(function(err,user){
 					if(err){
 						return res.send(err);

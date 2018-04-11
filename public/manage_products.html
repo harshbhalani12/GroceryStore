@@ -18,11 +18,14 @@
 
                         <label for="productImg" style="font-weight: normal; font-size: 0.9em">Product Photo</label>
                         <input type="file" ngf-select ng-model="productImage" name="productImage" class="form-control" 
-                        accept="image/*" required><br />
+                        accept="image/*"><br />
 
                         <label for="productPrice" style="font-weight: normal; font-size: 0.9em">Product Price</label>
                         <input type="text" name="productPrice" class="form-control" ng-model="price" required><br/>
-                        
+                    
+                        <label for="stockQuantity" style="font-weight: normal; font-size: 0.9em">Stock Quantity</label>
+                        <input type="number" name="stockQuantity" class="form-control" ng-model="quantity" required><br/>
+
                         <input type="submit" value="Submit">
                     </form>
                 </div>

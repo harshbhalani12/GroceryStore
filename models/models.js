@@ -6,7 +6,10 @@ var userSchema = new mongoose.Schema({
     email: String,
     password: String, // hash for password
     name : String,
-    admin: Boolean
+    admin: {
+        type: Boolean,
+        default: false
+    }
 });
 
 var productSchema = mongoose.Schema({
@@ -19,12 +22,19 @@ var productSchema = mongoose.Schema({
         required : true
     },
     productPrice:{
-        type:String,
+        type:Number,
         required : true
     },
     productImage:{
-        type:String,
-        required : true
+        type:String
+    },
+    stockQuantity:{
+        type: Number,
+        required: true
+    },
+    isDeleted: {
+        type: Boolean,
+        default: false
     }
 },{collection:'products'});
 
