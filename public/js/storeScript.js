@@ -4,8 +4,8 @@ app.config(function($routeProvider){
 	$routeProvider
 		//the timeline display
 		.when('/',{
-			template: '<p>Hi</p>',
-			controller: 'mainController'
+			templateUrl: 'products.html',
+			controller: 'productCtrl'
 		})
 		.when('/login', {
 			templateUrl: 'login.html',
@@ -21,13 +21,15 @@ app.config(function($routeProvider){
 		});
 });
 
-app.controller('mainController',function($scope,$http,$resource,$location,authService){
+app.controller('headerController',function($scope,$http,$resource,$location,authService){
 	var User = $resource('/api/user');
 	User.get({},function(user){
 		if(user.name){
 			$scope.authenticated = true;
+			authService.setAuthenticated(true);
 			if(user.admin){
 				$scope.admin = true;
+				authService.setIsAdmin(true);
 			}
 		}
 	});
@@ -155,8 +157,20 @@ app.controller('authController', function($scope, $http, $location,msgService,au
 	}
 });
 
-app.controller('manageProductsCtrl',function($scope,$resource,authService){
+app.controller('manageProductsCtrl',function($scope,$resource,$location,authService){
 	
+	var User = $resource('/api/user');
+	User.get({},function(user){
+		if(user.name){
+			$scope.authenticated = true;
+			authService.setAuthenticated(true);
+			if(user.admin){
+				$scope.admin = true;
+				authService.setIsAdmin(true);
+			}
+		}
+	});
+
 	$scope.$watch(authService.getAuthenticated, function(auth){
 		$scope.authenticated = auth;
 	});
@@ -165,18 +179,61 @@ app.controller('manageProductsCtrl',function($scope,$resource,authService){
 		$scope.admin = admin;
 	});
 	
-	$scope.data = {
-		operations:[
-			{id:'1', name : 'Add'	},
-			{id:'2', name : 'Update'},
-			{id:'3', name : 'Delete'}
-		],
-		categories:[
-			{id: '1', name: 'Category1'},
-			{id: '2', name: 'Category2'},
-			{id: '3', name: 'Category3'}
-		]
-	};
+	if(authService.getAuthenticated()){
+		$scope.data = {
+			operations:[
+				{id:'1', name : 'Add'	},
+				{id:'2', name : 'Update'},
+				{id:'3', name : 'Delete'}
+			],
+			categories:[
+				{id: '1', name: 'Category1'},
+				{id: '2', name: 'Category2'},
+				{id: '3', name: 'Category3'}
+			]
+		};
+	}
+	else{
+		$location.path('/login');
+	}
+	
+});
+
+app.controller('productCtrl',function($scope,$resource,$location,authService){
+	
+	var User = $resource('/api/user');
+	User.get({},function(user){
+		if(user.name){
+			$scope.authenticated = true;
+			authService.setAuthenticated(true);
+			if(user.admin){
+				$scope.admin = true;
+				authService.setIsAdmin(true);
+			}
+		}
+	});
+	$scope.$watch(authService.getAuthenticated, function(auth){
+		$scope.authenticated = auth;
+	});
+
+	$scope.$watch(authService.getIsAdmin,function(admin){
+		$scope.admin = admin;
+	});
+	if(authService.getAuthenticated()){
+		var Products = $resource('/api/products');
+		Products.query({},function(products,err){
+			$scope.products = products;
+		});
+
+		$scope.goToCart = function($scope){
+			if($scope.cart){
+				$location.path('')
+			}
+		};
+	}
+	else{
+		$location.path('/login');
+	}
 });
 
 app.factory('msgService', function () {
