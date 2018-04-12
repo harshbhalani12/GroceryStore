@@ -46,7 +46,7 @@ app.controller('headerController',function($scope,$http,$resource,$location,auth
 				authService.reset();
 				$scope.authenticated = false;
 				$scope.admin = false;
-				$location.path('/');
+				$location.path('/login');
 		});
 	};
 });
@@ -167,7 +167,25 @@ app.controller('manageProductsCtrl',function($scope,$resource,$location,authServ
 			if(user.admin){
 				$scope.admin = true;
 				authService.setIsAdmin(true);
+				$scope.data = {
+					operations:[
+						{id:'1', name : 'Add'	},
+						{id:'2', name : 'Update'},
+						{id:'3', name : 'Delete'}
+					],
+					categories:[
+						{id: '1', name: 'Category1'},
+						{id: '2', name: 'Category2'},
+						{id: '3', name: 'Category3'}
+					]
+				};
 			}
+			else{
+				$location.path('/login');
+			}
+		}
+		else{
+			$location.path('/login');
 		}
 	});
 
@@ -178,29 +196,20 @@ app.controller('manageProductsCtrl',function($scope,$resource,$location,authServ
 	$scope.$watch(authService.getIsAdmin,function(admin){
 		$scope.admin = admin;
 	});
+
 	
-	if(authService.getAuthenticated()){
-		$scope.data = {
-			operations:[
-				{id:'1', name : 'Add'	},
-				{id:'2', name : 'Update'},
-				{id:'3', name : 'Delete'}
-			],
-			categories:[
-				{id: '1', name: 'Category1'},
-				{id: '2', name: 'Category2'},
-				{id: '3', name: 'Category3'}
-			]
-		};
-	}
-	else{
-		$location.path('/login');
-	}
-	
+
 });
 
 app.controller('productCtrl',function($scope,$resource,$location,authService){
 	
+	$scope.$watch(authService.getAuthenticated, function(auth){
+		$scope.authenticated = auth;
+	});
+
+	$scope.$watch(authService.getIsAdmin,function(admin){
+		$scope.admin = admin;
+	});
 	var User = $resource('/api/user');
 	User.get({},function(user){
 		if(user.name){
@@ -210,30 +219,21 @@ app.controller('productCtrl',function($scope,$resource,$location,authService){
 				$scope.admin = true;
 				authService.setIsAdmin(true);
 			}
+			var Products = $resource('/api/products');
+			Products.query({},function(products,err){
+				$scope.products = products;
+			});
+		}
+		else{
+			$location.path('/login');
 		}
 	});
-	$scope.$watch(authService.getAuthenticated, function(auth){
-		$scope.authenticated = auth;
-	});
 
-	$scope.$watch(authService.getIsAdmin,function(admin){
-		$scope.admin = admin;
-	});
-	if(authService.getAuthenticated()){
-		var Products = $resource('/api/products');
-		Products.query({},function(products,err){
-			$scope.products = products;
-		});
-
-		$scope.goToCart = function($scope){
-			if($scope.cart){
-				$location.path('')
-			}
-		};
-	}
-	else{
-		$location.path('/login');
-	}
+	$scope.goToCart = function($scope){
+		if($scope.cart){
+			$location.path('')
+		}
+	};
 });
 
 app.factory('msgService', function () {
