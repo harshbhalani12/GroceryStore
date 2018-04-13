@@ -1,0 +1,39 @@
+<div class="w3_login">
+    <h3>Update Product</h3>
+    <div class="w3_login_module">
+        <div class="module form-module">
+
+            <div class="form">
+                <!-- control goes to api.js -->
+                <form action="/api/products" enctype="multipart/form-data" method="post">
+
+                    <input id="prod" type="text" name="productName" class="form-control" placeholder="Product Name" required=" " ng-model="productName">
+
+                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory" ng-options="option.name for option in data.categories track by option.id">
+                        <option value="" selected>Select Category</option>
+                    </select><br/>
+
+                    <label for="productImg" style="font-weight: normal; font-size: 0.9em">Product Photo</label>
+                    <input type="file" ngf-select ng-model="productImage" name="productImage" class="form-control" accept="image/*"><br />
+
+                    <label for="productPrice" style="font-weight: normal; font-size: 0.9em">Product Price</label>
+                    <input type="text" name="productPrice" class="form-control" ng-model="price" required>
+
+                    <label for="stockQuantity" style="font-weight: normal; font-size: 0.9em">Stock Quantity</label>
+                    <input type="number" name="stockQuantity" class="form-control" ng-model="quantity" required><br/>
+
+                    <input type="submit" value="Submit" ng-click="sub()">
+                </form>
+            </div>
+        </div>
+    </div>
+    <p ng-if="success_message">{{success_message}}</p>
+    <p ng-if="error_message">{{error_message}}</p>
+    <script>
+        $('.toggle').click(function() {
+            // Switches the Icon
+            $(this).children('i').toggleClass('fa-pencil');
+
+        });
+    </script>
+</div>
