@@ -1,38 +1,38 @@
+<div class="w3ls_w3l_banner_nav_right_grid">
+    <h3>Browse Products</h3>
+    <div class="w3ls_w3l_banner_nav_right_grid1">
+        <div ng-repeat="product in products" class="col-md-3 w3ls_w3l_banner_left">
+            <div class="hover14 column">
+                <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
+                    <div class="agile_top_brand_left_grid1">
+                        <figure>
+                            <div class="snipcart-item block">
+                                <div class="snipcart-thumb">
+                                    <img ng-src="images/{{product.productImage}}" alt=" " class="img-responsive" />
+                                    <p>{{product.productName}}</p>
+                                    <h4>${{product.productPrice}}</h4>
+                                    <button class="btn btn-primary" ng-if="admin" ng-click="updateProd(product)">Update</button>
+                                    <button class="btn btn-danger" ng-if="admin" ng-click="deleteProd()">Delete</button>
+                                </div>
+                                <div class="snipcart-details">
+                                    <form ng-submit="goToCart()" method="post">
+                                        <fieldset>
+                                            <input type="hidden" name="cmd" value="_cart" />
+                                            <input type="hidden" name="add" value="1" />
+                                            <input type="hidden" name="item_name" value="{{product.productName}}" />
+                                            <input type="hidden" name="amount" value="{{product.productPrice}}" />
+                                            <input type="submit" name="submit" value="Add to cart" class="button" />
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </figure>
+                    </div>
+                </div>
+            </div>
+        </div>
 
-			<div class="w3ls_w3l_banner_nav_right_grid">
-				<h3>Browse Products</h3>
-				<div class="w3ls_w3l_banner_nav_right_grid1">
-					<div ng-repeat = "product in products" class="col-md-3 w3ls_w3l_banner_left">
-						<div class="hover14 column">
-						<div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
-							<div class="agile_top_brand_left_grid1">
-								<figure>
-									<div class="snipcart-item block">
-										<div class="snipcart-thumb">
-											<img ng-src="images/{{product.productImage}}" alt=" " class="img-responsive" />
-											<p>{{product.productName}}</p>
-											<h4>${{product.productPrice}}</h4>
-											<button class="btn btn-primary" ng-if="admin">Update</button><button class="btn btn-danger" ng-if="admin">Delete</button>
-										</div>
-										<div class="snipcart-details">
-											<form ng-submit="goToCart()" method="post">
-												<fieldset>
-													<input type="hidden" name="cmd" value="_cart" />
-													<input type="hidden" name="add" value="1" />
-													<input type="hidden" name="item_name" value="{{product.productName}}" />
-													<input type="hidden" name="amount" value="{{product.productPrice}}" />
-													<input type="submit" name="submit" value="Add to cart" class="button" />
-												</fieldset>
-											</form>
-										</div>
-									</div>
-								</figure>
-							</div>
-						</div>
-						</div>
-					</div>
-					
-					<div class="clearfix"> </div>
-				</div>
-			</div>
-		<div class="clearfix"></div>
+        <div class="clearfix"> </div>
+    </div>
+</div>
+<div class="clearfix"></div>
