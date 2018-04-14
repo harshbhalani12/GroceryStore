@@ -13,7 +13,7 @@ module.exports = function(passport){
 		  if (!user) { return res.json({'state':false,'message':'Username and Password do not match.'}); }
 		  req.login(user, function(err) {
 			if (err) { return next(err); }
-			return res.json({'state':true,'name':user.name,'isAdmin':user.admin});
+			return res.json({'state':true,'name':user.name,'isAdmin':user.admin, 'userID':user._id});
 		  });
 		})(req, res, next);
 	});

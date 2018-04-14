@@ -3,6 +3,7 @@ var router = express.Router();
 var mongoose = require('mongoose');
 var Product = mongoose.model('Product');
 var User = mongoose.model('User');
+var Cart = mongoose.model('Cart');
 
 mongoose.Promise = global.Promise;
 
@@ -53,9 +54,9 @@ function isAuthenticated(req, res, next) {
 
 
 router.route('/user')
-    .get(function(req, res) {
-        if (req.user) {
-            return res.json({ 'name': req.user.name, 'admin': req.user.admin });
+    .get(function(req,res){
+        if(req.user){
+            return res.json({'name':req.user.name,'admin':req.user.admin,'userID':req.user._id});
         }
         return res.json({});
     });
@@ -151,8 +152,52 @@ router.delete('/products/:id', function(req, res) {
     });
 });
 
+router.get('/cart/:userID',function(req,res){
+    console.log("Inside api")
+    Cart.find({'userID':req.params.userID},function(err,cart){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json(cart);
+        }
+    });
+});
 
-// }
+router.put('/cart/:userID',function(req,res){
+    var putBody = req.body;
+    var data = {
+        userID: req.params.userID,
+        products: putBody.products
+    };
+    var cart = new Cart(data);
+    cart.update(function(err){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json({'state':true});
+        }
+    });
+});
+
+router.post('/cart',function(req,res){
+    var postBody = req.body;
+    var data = {
+        userID: postBody.userID,
+        products: postBody.products
+    };
+    var cart = new Cart(data);
+    cart.save(function(err){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json({'state':true});
+        }
+    });
+});
+	// }
 // router.route('/posts')
 
 //     // return all posts

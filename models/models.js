@@ -52,9 +52,12 @@ var purchaseRecord = new mongoose.Schema({
 });
 
 var cart = new mongoose.Schema({
-    productID: { type: Schema.Types.ObjectId, ref: 'Product' },
-    userID: { type: Schema.Types.ObjectId, ref: 'User' },
-    cartQuantity: Number
+    userID: Schema.Types.ObjectId,
+    products: [{
+        productName: String,
+        quantity: Number,
+        price: Number
+    }],
 });
 
 //declare a model called User which has schema userSchema
