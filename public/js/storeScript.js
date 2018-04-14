@@ -200,8 +200,11 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
     $scope.productName = $rootScope.prod.productName;
     $scope.price = $rootScope.prod.productPrice;
     $scope.quantity = $rootScope.prod.stockQuantity;
+
     $scope.id = {
-        id: $rootScope.prod._id
+        id: $rootScope.prod._id,
+        img: $rootScope.prod.productImage,
+        category: $rootScope.prod.productCategory
     }
 
     var User = $resource('/api/user');
@@ -219,6 +222,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
                         { id: '3', name: 'Category3' }
                     ]
                 };
+                //$scope.productCategory = $scope.data.categories[$rootScope.prod.productCategory];
             } else {
                 $location.path('/login');
             }
@@ -236,13 +240,6 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
     $scope.$watch(authService.getIsAdmin, function(admin) {
         $scope.admin = admin;
     });
-
-    $scope.sub = function() {
-
-
-    };
-
-
 
 });
 
@@ -288,6 +285,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $location,
     $scope.deleteProd = function(prod) {
         console.log(prod);
         $http.delete('/api/products/' + prod).then(function(response) {});
+        $location.path('/products');
     };
 });
 

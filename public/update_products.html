@@ -9,11 +9,11 @@
 
                     <input id="prod" type="text" name="productName" class="form-control" placeholder="Product Name" required=" " ng-model="productName">
 
-                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory" ng-options="option.name for option in data.categories track by option.id">
+                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory"  ng-options="option.name for option in data.categories track by option.id">
                         <option value="" selected>Select Category</option>
                     </select><br/>
 
-                    <img src="/images/1.png" />
+                    <img src="{{'/images/'+id.img}}" /><br/>
                     <label for="productImg" style="font-weight: normal; font-size: 0.9em">Product Photo</label>
                     <input type="file" ngf-select ng-model="productImage" name="productImage" class="form-control" accept="image/*"><br />
 
