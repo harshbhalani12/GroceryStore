@@ -200,6 +200,9 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
     $scope.productName = $rootScope.prod.productName;
     $scope.price = $rootScope.prod.productPrice;
     $scope.quantity = $rootScope.prod.stockQuantity;
+    $scope.id = {
+        id: $rootScope.prod._id
+    }
 
     var User = $resource('/api/user');
     User.get({}, function(user) {
@@ -243,7 +246,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
 
 });
 
-app.controller('productCtrl', function($scope, $rootScope, $resource, $location, authService) {
+app.controller('productCtrl', function($scope, $rootScope, $resource, $location, authService, $http) {
 
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
@@ -280,6 +283,11 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $location,
         $location.path('/update_products');
         $rootScope.prod = prod;
         console.log(prod.productName);
+    };
+
+    $scope.deleteProd = function(prod) {
+        console.log(prod);
+        $http.delete('/api/products/' + prod).then(function(response) {});
     };
 });
 

@@ -5,7 +5,7 @@
 
             <div class="form">
                 <!-- control goes to api.js -->
-                <form action="/api/products" enctype="multipart/form-data" method="post">
+                <form action="{{'/api/products/'+id.id}}" enctype="multipart/form-data" method="post">
 
                     <input id="prod" type="text" name="productName" class="form-control" placeholder="Product Name" required=" " ng-model="productName">
 
@@ -13,6 +13,7 @@
                         <option value="" selected>Select Category</option>
                     </select><br/>
 
+                    <img src="/images/1.png" />
                     <label for="productImg" style="font-weight: normal; font-size: 0.9em">Product Photo</label>
                     <input type="file" ngf-select ng-model="productImage" name="productImage" class="form-control" accept="image/*"><br />
 
@@ -22,7 +23,7 @@
                     <label for="stockQuantity" style="font-weight: normal; font-size: 0.9em">Stock Quantity</label>
                     <input type="number" name="stockQuantity" class="form-control" ng-model="quantity" required><br/>
 
-                    <input type="submit" value="Submit" ng-click="sub()">
+                    <input type="submit" value="Submit">
                 </form>
             </div>
         </div>

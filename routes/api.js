@@ -110,7 +110,7 @@ router.post('/products', multer(multerConf).single('productImage'), function(req
 });
 
 
-router.put('/products/:id', multer(multerConf).single('productImage'), function(req, res) {
+router.post('/products/:id', multer(multerConf).single('productImage'), function(req, res) {
     var putBody = req.body;
 
     console.log("put:" + req.file);
