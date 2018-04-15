@@ -1,7 +1,9 @@
+
 <div class="w3ls_w3l_banner_nav_right_grid">
     <h3>Browse Products</h3>
+    <div id="error_message"><p class="alert alert-danger" ng-show="error_message">{{error_message}}</p></div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
-        <div ng-repeat="product in products | filter:{isDeleted:false}" class="col-md-3 w3ls_w3l_banner_left">
+        <div ng-repeat="product in products | filter:query" class="col-md-3 w3ls_w3l_banner_left" ng-if="!isDeleted">
             <div class="hover14 column">
                 <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
                     <div class="agile_top_brand_left_grid1">
@@ -16,8 +18,8 @@
                                 </div>
                                 <div class="snipcart-details">
 									<button class="btn btn-info" ng-click="addToCart(product)">+</button>
-									<span id="span-{{product._id}}">{{product.cartQuantity}}</span>
-									<button class="btn btn-info" ng-click="decreaseCartQuantity(product)">-</button> 
+									<span>{{product.cartQuantity}}</span>
+									<button class="btn btn-info" ng-click="removeFromCart(product)">-</button> 
                                 </div>
                             </div>
                         </figure>

@@ -164,36 +164,33 @@ router.get('/cart/:userID',function(req,res){
     });
 });
 
-router.put('/cart/:userID',function(req,res){
-    var putBody = req.body;
-    var data = {
-        userID: req.params.userID,
-        products: putBody.products
-    };
-    var cart = new Cart(data);
-    cart.update(function(err){
-        if(err){
-            res.send(err);
-        }
-        else{
-            res.json({'state':true});
-        }
-    });
-});
+// router.put('/cart/:userID',function(req,res){
+//     var putBody = req.body;
+//     var data = {
+//         userID: req.params.userID,
+//         products: putBody.products
+//     };
+//     var cart = new Cart(data);
+//     cart.update(function(err){
+//         if(err){
+//             res.send(err);
+//         }
+//         else{
+//             res.json({'state':true});
+//         }
+//     });
+// });
 
-router.post('/cart',function(req,res){
-    var postBody = req.body;
-    var data = {
-        userID: postBody.userID,
-        products: postBody.products
-    };
-    var cart = new Cart(data);
-    cart.save(function(err){
+router.put('/cart',function(req,res){
+    var putBody = req.body;
+    var query = { userID: putBody.userID};
+    var update = {products: putBody.products,userID: putBody.userID};
+    Cart.findOneAndUpdate(query,update,{upsert: true},function(err,cart){
         if(err){
             res.send(err);
         }
         else{
-            res.json({'state':true});
+            res.json({'state':'Updated cart successfully!'});
         }
     });
 });

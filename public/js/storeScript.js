@@ -22,7 +22,11 @@ app.config(function($routeProvider) {
         .when('/manage_products', {
             templateUrl: 'manage_products.html',
             controller: 'manageProductsCtrl'
-		})
+        })
+        .when('/cart',{
+            templateUrl: 'cart.html',
+            controller: 'cartCtrl'
+        })
 		.otherwise({
 			redirectTo: '/'
 		});
@@ -222,7 +226,8 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
 					{ id: '1', name: 'Category1' },
 					{ id: '2', name: 'Category2' },
 					{ id: '3', name: 'Category3' }
-				];
+                ];
+                console.log($rootScope.prod);
 				console.log($rootScope.prod.productCategory);
                 $scope.productCategory = $rootScope.prod.productCategory;
             } else {
@@ -245,7 +250,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $resource, $lo
 
 });
 
-app.controller('productCtrl', function($scope, $rootScope, $resource, $location, authService, $http) {
+app.controller('productCtrl', function($scope, $rootScope, $resource, $location, authService,cartService,msgService,$http) {
 
 	$scope.product = {};
 	var productQuantityDict = {};
@@ -256,6 +261,12 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $location,
 
     $scope.$watch(authService.getIsAdmin, function(admin) {
         $scope.admin = admin;
+	});
+	$scope.$watch(msgService.getSuccessMessage, function(message) {
+        $scope.success_message = message;
+    });
+    $scope.$watch(msgService.getErrorMessage, function(message) {
+        $scope.error_message = message;
     });
     var User = $resource('/api/user');
     User.get({},function(user){
@@ -267,23 +278,32 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $location,
 				$scope.admin = true;
 				authService.setIsAdmin(true);
 			}
+			var Cart = $resource('/api/cart/'+user.userID);
+			Cart.query({},function(cart){
+                if(cart && cart.length > 0){
+                    $scope.cart = cart;
+				    cartService.setCart(cart[0].products);
+                    for(var i = 0; i < cart[0].products.length; i++){
+                        productQuantityDict[cart[0].products[i]._id] = cart[0].products[i].quantity;
+                    }
+                }
+				   
+            });
+            cartService.setProductQuantityDict(productQuantityDict);
+
 			var Products = $resource('/api/products');
 			Products.query({},function(products,err){
 				$scope.products = products;
-			});
-			var Cart = $resource('/api/cart/'+user.userID);
-			Cart.query({},function(cart){
-				$scope.cart = cart;
-				for(var i = 0; i < cart.length; i++){
-					for(var product in $scope.products){
-						productQuantityDict[product.productName] = 0;
-						if(cart[i].productId == product.productId){
-							console.log("In cart: productID "+cart[i].productId);
-							continue;
-						}
-					}
+				for(var product in $scope.products){
+                    if(productQuantityDict[$scope.products[product]._id]){
+                        $scope.products[product].cartQuantity = productQuantityDict[$scope.products[product]._id];
+                    }
+                    else{
+                        $scope.products[product].cartQuantity = 0;
+                    }
 				}
 			});
+			
 		}
 		else{
 			$location.path('/login');
@@ -303,43 +323,116 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $location,
 	};
 	
 	$scope.addToCart = function(product){
-		if(cartService.getCart().length == 0){
-			productQuantityDict[product.productName] += 1;
-			cartService.addToCart(product);
-			var productObj = {
+		
+		if(!productQuantityDict[product._id] || productQuantityDict[product._id] == 0){
+            productQuantityDict[product._id] = 1;
+            cartService.setProductQuantityDict(productQuantityDict);
+			var prodObj = {
+				_id: product._id,
 				productName: product.productName,
-				quantity: cartService.getCartQuantity(product._id),
+				quantity: 1,
 				price: product.productPrice
 			};
-			productsArr = [productObj];
-			$http.post('/api/cart/',{'products':productsArr}).then(function success(response){
-				console.log("Posted cart");
-			},function error(response){
-				console.log("Error");
+			product.cartQuantity = 1;
+			cartService.addToCart(prodObj);
+            msgService.reset();
+            console.log(cartService.getCart());
+			$http.put('/api/cart',{'products':cartService.getCart(),'userID':authService.getUserID()}).then(function success(response){
+				console.log("Added to cart successfully");
+			},function error(err){
+				console.log("Error in adding to cart!");
 			});
 		}
 		else{
-			if(productQuantityDict[product.productName] == product.stockQuantity){
-				console.log("Cannot add more items of this type!");
-			}
-			else{
+			if(productQuantityDict[product._id] < product.stockQuantity){
+                productQuantityDict[product._id] += 1;
+                cartService.setProductQuantityDict(productQuantityDict);
 				cartService.increaseCartQuantity(product._id);
-				productQuantityDict[product.productName] += 1;
-				var cart = cartService.getCart();
-				var productObj = {
+				var prodObj = {
+					_id: product._id,
 					productName: product.productName,
-					quantity: cartService.getCartQuantity(product._id),	
+					quantity: cartService.getCartQuantity(product._id),
 					price: product.productPrice
 				};
-				
-				$http.put('/api/cart/'+authService.getUserID(),{'products':cart}).then(function success(response){
-					console.log("Updated cart");
-				},function error(response){
-					console.log("Error");
+                product.cartQuantity += 1;
+                console.log(cartService.getCart());
+				$http.put('/api/cart',{'products':cartService.getCart(),'userID':authService.getUserID()}).then(function success(response){
+					console.log("Added to cart successfully");
+				},function error(err){
+					console.log("Error in adding to cart!");
 				});
+				msgService.reset();
+			}
+			else{
+				msgService.setErrorMessage("Cannot add any more items of this type to the cart!");
 			}
 		}
-	}
+    }
+    
+    $scope.removeFromCart = function(product){
+        if(!productQuantityDict[product._id] || productQuantityDict[product._id] == 0){
+            msgService.setErrorMessage("Cannot remove item, item is not in cart!");
+        }
+        else{
+            productQuantityDict[product._id] -= 1;
+            cartService.setProductQuantityDict(productQuantityDict);
+            if(productQuantityDict[product._id] == 0){
+                cartService.removeFromCart(product._id);
+                product.cartQuantity = 0;
+            }
+            else{
+                cartService.decreaseCartQuantity(product._id);
+                product.cartQuantity -= 1;
+            }
+            console.log(cartService.getCart());
+            $http.put('/api/cart',{'products':cartService.getCart(),'userID':authService.getUserID()}).then(function success(response){
+                console.log("Updated cart successfully");
+            },function error(err){
+                console.log("Error in updating cart");
+            });
+        }
+    };
+
+    $scope.goToCart = function(){
+        console.log("Inside go to cart function");
+        $location.path('/cart');
+    };
+});
+
+app.controller('cartCtrl',function($scope,$resource,$location,authService,cartService){
+    $scope.cart = [];
+    $scope.$watch(authService.getAuthenticated, function(auth) {
+        $scope.authenticated = auth;
+    });
+
+    $scope.$watch(authService.getIsAdmin, function(admin) {
+        $scope.admin = admin;
+    });
+    
+    var User = $resource('/api/user');
+    User.get({},function(user){
+		if(user.userID){
+			authService.setUserID(user.userID);
+			$scope.authenticated = true;
+			authService.setAuthenticated(true);
+			if(user.admin){
+				$scope.admin = true;
+				authService.setIsAdmin(true);
+			}
+			var Cart = $resource('/api/cart/'+user.userID);
+			Cart.query({},function(cart){
+				$scope.cart = cart;
+				cartService.setCart(cart);
+			});
+		}
+		else{
+			$location.path('/login');
+		}
+    });
+    $scope.backToProducts = function(){
+        $location.path('/');
+    };
+    
 });
 
 app.factory('msgService', function() {
@@ -394,62 +487,71 @@ app.factory('authService',function(){
 });
 
 app.factory('cartService',function(){
-	var cart=[];
+	this.cart=[],this.prodQuantityDict = {};
 	return{
 		addToCart: function(product){
 			var alreadyInCart = false;
-			for(var i = 0; i < cart.length; i++){
-				if(cart[i]._id == product._id){
-					cart[i].quantity += 1;
+			for(var i = 0; i < this.cart.length; i++){
+				if(this.cart[i]._id == product._id){
+					this.cart[i].quantity += 1;
 					alreadyInCart = true;
 					break;
 				}
 			}
 			if(!alreadyInCart){	
 				product.quantity = 1;
-				cart.push(product);
+				this.cart.push(product);
 			}
 		},
 		removeFromCart: function(productId){
-			for(var i = 0; i < cart.length; i++){
-				if(cart[i]._id == productId){
-					cart.splice(i,1);
+			for(var i = 0; i < this.cart.length; i++){
+				if(this.cart[i]._id == productId){
+					this.cart.splice(i,1);
 					break;
 				}
 			}
 		},
 		increaseCartQuantity: function(productId){
-			for(var i = 0; i < cart.length; i++){
-				if(cart[i]._id == productId){
-					cart[i].quantity += 1;
+			for(var i = 0; i < this.cart.length; i++){
+				if(this.cart[i]._id == productId){
+					this.cart[i].quantity += 1;
 					break;
 				}
 			}
 		},
 		decreaseCartQuantity: function(productId){
-			for(var i = 0; i < cart.length; i++){
-				if(cart[i]._id == productId){
-					if(cart[i].quantity == 1){
-						cart.splice(i,1);
+			for(var i = 0; i < this.cart.length; i++){
+				if(this.cart[i]._id == productId){
+					if(this.cart[i].quantity == 1){
+						this.cart.splice(i,1);
 						break;
 					}
 					else{
-						cart[i].quantity -= 1;
+						this.cart[i].quantity -= 1;
 						break;
 					}
 				}
 			}
 		},
 		getCart: function(){
-			return cart;
+			return this.cart;
 		},
 		getCartQuantity: function(productId){
-			for(var i = 0; i < cart.length; i++){
-				if(cart[i]._id == productId){
-					return cart[i].quantity;
+			for(var i = 0; i < this.cart.length; i++){
+				if(this.cart[i]._id == productId){
+					return this.cart[i].quantity;
 				}
 			}
 			return 0;
-		}
+		},
+		setCart: function(cart){
+			this.cart = cart;
+        },
+        setProductQuantityDict: function(dict){
+            this.prodQuantityDict = dict;
+        },
+        getProductQuantityDict: function(){
+            return this.prodQuantityDict;
+        }
 	}
 });

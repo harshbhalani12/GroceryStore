@@ -54,6 +54,7 @@ var purchaseRecord = new mongoose.Schema({
 var cart = new mongoose.Schema({
     userID: Schema.Types.ObjectId,
     products: [{
+        _id: Schema.Types.ObjectId,
         productName: String,
         quantity: Number,
         price: Number
