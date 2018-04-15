@@ -3,7 +3,7 @@
     <h3>Browse Products</h3>
     <div id="error_message"><p class="alert alert-danger" ng-show="error_message">{{error_message}}</p></div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
-        <div ng-repeat="product in products | filter:query" class="col-md-3 w3ls_w3l_banner_left" ng-if="!isDeleted">
+        <div ng-repeat="product in products | filter:query" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
             <div class="hover14 column">
                 <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
                     <div class="agile_top_brand_left_grid1">
