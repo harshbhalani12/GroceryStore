@@ -146,9 +146,27 @@ router.delete('/products/:id', function(req, res) {
             if (err) {
                 res.send(err);
             }
-            res.json({ state: 'Safe delete complete' });
+            Cart.find({},function(err,carts){
+                for(var cart in carts){
+                    var prodArr = carts[cart].products;
+                    
+                    for(var i = 0; i < prodArr.length; i++){
+                        console.log(prodArr[i].id);
+                        console.log(product._id);
+                        if(prodArr[i].id == req.params.id){
+                            prodArr.splice(i,1);
+                            carts[cart].products = prodArr;
+                            carts[cart].save(function(err){
+                                if(err){
+                                    res.send(err);
+                                }
+                                res.json({'state':'Safe delete complete'});
+                            });
+                        }
+                    }
+                }
+            });
         });
-
     });
 });
 
