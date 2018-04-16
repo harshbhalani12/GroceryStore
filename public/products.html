@@ -1,7 +1,8 @@
-
 <div class="w3ls_w3l_banner_nav_right_grid">
     <h3>Browse Products</h3>
-    <div id="error_message"><p class="alert alert-danger" ng-show="error_message">{{error_message}}</p></div>
+    <div id="error_message">
+        <p class="alert alert-danger" ng-show="error_message">{{error_message}}</p>
+    </div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
         <div ng-repeat="product in products | filter:query" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
             <div class="hover14 column">
@@ -17,14 +18,16 @@
                                     <button class="btn btn-danger" ng-if="admin" ng-click="deleteProd(product._id)">Delete</button>
                                 </div>
                                 <div class="snipcart-details">
-									<button class="btn btn-info" ng-click="addToCart(product)">+</button>
-									<span>{{product.cartQuantity}}</span>
-									<button class="btn btn-info" ng-click="removeFromCart(product)">-</button> 
+                                    <button class="btn btn-info" ng-click="addToCart(product)">+</button>
+                                    <span>{{product.cartQuantity}}</span>
+                                    <button class="btn btn-info" ng-click="removeFromCart(product)">-</button>
                                 </div>
                             </div>
                         </figure>
                     </div>
                 </div>
             </div>
-		</div>
-</div>
+        </div>
+    </div>
+    <pagination ng-model="currentPage" total-items="todos.length" max-size="maxSize" boundary-links="true" ng-controller="productCtrl"></pagination>
+</div>>

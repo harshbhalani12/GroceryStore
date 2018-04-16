@@ -9,8 +9,9 @@
 
                     <input id="prod" type="text" name="productName" class="form-control" placeholder="Product Name" required=" " ng-model="productName">
 
-                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory"  ng-options="option.name for option in categories track by option.id">
+                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory">
                         <!-- <option value="">Select Category</option> -->
+                        <option ng-repeat="option in categories" value="{{option.id}}">{{option.name}}</option>
                     </select><br/>
 
                     <img src="{{'/images/'+id.img}}" /><br/>
