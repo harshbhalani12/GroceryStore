@@ -8,6 +8,7 @@ html, body{
     font-size: 100%;
 	font-family: 'Open Sans', sans-serif;
 	background:#ffffff;
+	
 }
 
 .prodcutPagination{
@@ -1799,7 +1800,8 @@ h2.typoh2{
 	}
 }
 .typo,.privacy,.faq,.services,.events,.mail,.agileinfo_single,.w3_login{
-    padding: 5em;
+	/* padding: 5em; */
+	padding: 0em;
 }
 /*--//Typography --*/
 /*-- pet-food --*/

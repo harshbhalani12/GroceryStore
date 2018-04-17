@@ -28,16 +28,16 @@
                         <figure>
                             <div class="snipcart-item block">
                                 <div class="snipcart-thumb">
-                                    <img ng-src="images/{{product.productImage}}" alt=" " class="img-responsive" />
+                                    <img ng-src="images/{{product.productImage}}" alt="Image not fonund!" class="img-responsive" />
                                     <p>{{product.productName}}</p>
                                     <h4>${{product.productPrice}}</h4>
                                     <button class="btn btn-primary" ng-if="admin" ng-click="updateProd(product)">Update</button>
                                     <button class="btn btn-danger" ng-if="admin" ng-click="deleteProd(product._id)">Delete</button>
                                 </div>
                                 <div class="snipcart-details">
-                                    <button class="btn btn-info" ng-click="addToCart(product)">+</button>
+                                    <button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>
                                     <span>{{product.cartQuantity}}</span>
-                                    <button class="btn btn-info" ng-click="removeFromCart(product)">-</button>
+                                    <button class="btn btn-danger" ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button>
                                 </div>
                             </div>
                         </figure>
@@ -46,22 +46,4 @@
             </div>
         </div>
     </div>
-
-    <div class="row">
-            <div class="col-md-4">    
-            </div>
-            <div class="col-md-4">
-                    <dir-pagination-controls
-                    [max-size="10"]
-                    [direction-links="true"]
-                    [boundary-links="true"]
-                    [on-page-change=""]
-                    [pagination-id=""]
-                    [template-url=""]
-                    [auto-hide=""]>
-                </dir-pagination-controls>
-            </div>
-            <div class="col-md-4">    
-            </div>
-        </div>
 </div>
