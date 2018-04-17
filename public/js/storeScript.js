@@ -1,4 +1,4 @@
-var app = angular.module('groceryStore', ['ngRoute', 'ngResource']);
+var app = angular.module('groceryStore', ['ngRoute', 'ngResource', 'angularUtils.directives.dirPagination']);
 
 app.config(function($routeProvider) {
     $routeProvider
@@ -32,12 +32,7 @@ app.config(function($routeProvider) {
         });
 });
 
-<<<<<<< HEAD
-
-app.controller('headerController', function($scope, $http, $resource, $location, authService) {
-=======
 app.controller('headerController', function($scope, $http, $resource, $location, authService,cartService) {
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
     var User = $resource('/api/user');
     User.get({}, function(user) {
         if (user.name) {
@@ -263,18 +258,10 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
 
 });
 
-<<<<<<< HEAD
-app.controller('productCtrl', function($scope, $rootScope, $resource, $location, authService, cartService, msgService, $http) {
-
-    $scope.product = {};
-    var productQuantityDict = {};
-
-=======
 app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$location, authService,cartService,msgService,$http) {
 
 	$scope.product = {};
 	var userProdQuantityDictMap = {};
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -289,24 +276,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         $scope.error_message = message;
     });
     var User = $resource('/api/user');
-<<<<<<< HEAD
-    User.get({}, function(user) {
-        if (user.userID) {
-            authService.setUserID(user.userID);
-            $scope.authenticated = true;
-            authService.setAuthenticated(true);
-            if (user.admin) {
-                $scope.admin = true;
-                authService.setIsAdmin(true);
-            }
-            var Cart = $resource('/api/cart/' + user.userID);
-            Cart.query({}, function(cart) {
-                if (cart && cart.length > 0) {
-                    $scope.cart = cart;
-                    cartService.setCart(cart[0].products);
-                    for (var i = 0; i < cart[0].products.length; i++) {
-                        productQuantityDict[cart[0].products[i]._id] = cart[0].products[i].quantity;
-=======
     User.get({},function(user){
 		if(user.userID){
 			authService.setUserID(user.userID);
@@ -324,34 +293,11 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
                     userProdQuantityDictMap[user.userID] = {};
                     for(var i = 0; i < cart[0].products.length; i++){
                         userProdQuantityDictMap[user.userID][cart[0].products[i]._id] = cart[0].products[i].quantity;
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
                     }
                     cartService.setProductQuantityDict(userProdQuantityDictMap);
                 }
-<<<<<<< HEAD
-
-=======
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
             });
 
-<<<<<<< HEAD
-            var Products = $resource('/api/products');
-            Products.query({}, function(products, err) {
-                $scope.products = products;
-                for (var product in $scope.products) {
-                    if (productQuantityDict[$scope.products[product]._id]) {
-                        $scope.products[product].cartQuantity = productQuantityDict[$scope.products[product]._id];
-                    } else {
-                        $scope.products[product].cartQuantity = 0;
-                    }
-                }
-            });
-
-        } else {
-            $location.path('/login');
-        }
-    });
-=======
 			var Products = $resource('/api/products');
 			Products.query().$promise.then(function(products){
                 $scope.products = products;
@@ -371,7 +317,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 			$location.path('/login');
 		}
 	});
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
 
     $scope.updateProd = function(prod) {
         $location.path('/update_products');
@@ -383,41 +328,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         console.log(prod);
         $http.delete('/api/products/' + prod).then(function(response) {});
         $location.path('/products');
-<<<<<<< HEAD
-    };
-
-    $scope.addToCart = function(product) {
-
-        if (!productQuantityDict[product._id] || productQuantityDict[product._id] == 0) {
-            productQuantityDict[product._id] = 1;
-            cartService.setProductQuantityDict(productQuantityDict);
-            var prodObj = {
-                _id: product._id,
-                productName: product.productName,
-                quantity: 1,
-                price: product.productPrice
-            };
-            product.cartQuantity = 1;
-            cartService.addToCart(prodObj);
-            msgService.reset();
-            console.log(cartService.getCart());
-            $http.put('/api/cart', { 'products': cartService.getCart(), 'userID': authService.getUserID() }).then(function success(response) {
-                console.log("Added to cart successfully");
-            }, function error(err) {
-                console.log("Error in adding to cart!");
-            });
-        } else {
-            if (productQuantityDict[product._id] < product.stockQuantity) {
-                productQuantityDict[product._id] += 1;
-                cartService.setProductQuantityDict(productQuantityDict);
-                cartService.increaseCartQuantity(product._id);
-                var prodObj = {
-                    _id: product._id,
-                    productName: product.productName,
-                    quantity: cartService.getCartQuantity(product._id),
-                    price: product.productPrice
-                };
-=======
 	};
 	
 	$scope.addToCart = function(product){
@@ -452,7 +362,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 					quantity: cartService.getCartQuantity(product._id),
 					price: product.productPrice
 				};
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
                 product.cartQuantity += 1;
                 console.log(cartService.getCart());
                 $http.put('/api/cart', { 'products': cartService.getCart(), 'userID': authService.getUserID() }).then(function success(response) {
@@ -466,16 +375,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
             }
         }
     }
-<<<<<<< HEAD
-
-    $scope.removeFromCart = function(product) {
-        if (!productQuantityDict[product._id] || productQuantityDict[product._id] == 0) {
-            msgService.setErrorMessage("Cannot remove item, item is not in cart!");
-        } else {
-            productQuantityDict[product._id] -= 1;
-            cartService.setProductQuantityDict(productQuantityDict);
-            if (productQuantityDict[product._id] == 0) {
-=======
     
     $scope.removeFromCart = function(product){
         var userID = authService.getUserID();
@@ -486,7 +385,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
             userProdQuantityDictMap[userID][product._id] -= 1;
             cartService.setProductQuantityDict(userProdQuantityDictMap[userID]);
             if(userProdQuantityDictMap[userID][product._id] == 0){
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
                 cartService.removeFromCart(product._id);
                 product.cartQuantity = 0;
             } else {
@@ -508,13 +406,8 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
     };
 });
 
-<<<<<<< HEAD
-app.controller('cartCtrl', function($scope, $resource, $location, authService, cartService) {
-    $scope.cart = [];
-=======
 app.controller('cartCtrl',function($scope,$filter,$resource,$location,authService,cartService){
     $scope.cart = [],$scope.total = 0;
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -524,25 +417,6 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$location,authServic
     });
 
     var User = $resource('/api/user');
-<<<<<<< HEAD
-    User.get({}, function(user) {
-        if (user.userID) {
-            authService.setUserID(user.userID);
-            $scope.authenticated = true;
-            authService.setAuthenticated(true);
-            if (user.admin) {
-                $scope.admin = true;
-                authService.setIsAdmin(true);
-            }
-            var Cart = $resource('/api/cart/' + user.userID);
-            Cart.query({}, function(cart) {
-                $scope.cart = cart;
-                cartService.setCart(cart);
-            });
-        } else {
-            $location.path('/login');
-        }
-=======
     User.get({},function(user){
 		if(user.userID){
 			authService.setUserID(user.userID);
@@ -564,7 +438,6 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$location,authServic
 		else{
 			$location.path('/login');
 		}
->>>>>>> cdeaab65faed28adafe29b4b9d30680c971e581f
     });
     $scope.backToProducts = function() {
         $location.path('/');

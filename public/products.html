@@ -3,8 +3,25 @@
     <div id="error_message">
         <p class="alert alert-danger" ng-show="error_message">{{error_message}}</p>
     </div>
+    <div class="row">
+        <div class="col-md-4">
+        </div>
+        <div class="col-md-4">
+                <dir-pagination-controls
+                [max-size="10"]
+                [direction-links="true"]
+                [boundary-links="true"]
+                [on-page-change=""]
+                [pagination-id=""]
+                [template-url=""]
+                [auto-hide=""]>
+            </dir-pagination-controls>
+        </div>
+        <div class="col-md-4">
+        </div>
+    </div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
-        <div ng-repeat="product in products | filter:query" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
+        <div dir-paginate="product in products | filter:query | itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
             <div class="hover14 column">
                 <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
                     <div class="agile_top_brand_left_grid1">
@@ -29,5 +46,22 @@
             </div>
         </div>
     </div>
-    <pagination ng-model="currentPage" total-items="todos.length" max-size="maxSize" boundary-links="true" ng-controller="productCtrl"></pagination>
-</div>>
+
+    <div class="row">
+            <div class="col-md-4">    
+            </div>
+            <div class="col-md-4">
+                    <dir-pagination-controls
+                    [max-size="10"]
+                    [direction-links="true"]
+                    [boundary-links="true"]
+                    [on-page-change=""]
+                    [pagination-id=""]
+                    [template-url=""]
+                    [auto-hide=""]>
+                </dir-pagination-controls>
+            </div>
+            <div class="col-md-4">    
+            </div>
+        </div>
+</div>

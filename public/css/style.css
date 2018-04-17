@@ -9,6 +9,13 @@ html, body{
 	font-family: 'Open Sans', sans-serif;
 	background:#ffffff;
 }
+
+.prodcutPagination{
+	display: block;
+  margin-right: auto;
+  margin-left: auto;
+}
+
 ul li,ol li{
 	font-size:14px;
 }
