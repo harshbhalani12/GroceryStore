@@ -178,9 +178,11 @@ app.controller('manageProductsCtrl', function($scope, $resource, $location, auth
                         { id: '3', name: 'Delete' }
                     ],
                     categories: [
-                        { id: '1', name: 'Category1' },
-                        { id: '2', name: 'Category2' },
-                        { id: '3', name: 'Category3' }
+                        { id: '1', name: 'Veggies & Fruits' },
+                        { id: '2', name: 'Beverages' },
+                        { id: '3', name: 'Bread & Bakery' },
+                        { id: '4', name: 'House Holds' },
+                        { id: '5', name: 'Branded Foods' }
                     ]
                 };
             } else {
