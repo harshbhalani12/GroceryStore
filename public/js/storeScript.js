@@ -332,7 +332,11 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         console.log(prod);
         $http.delete('/api/products/' + prod).then(function(response) {});
         $location.path('/products');
-	};
+    };
+    
+    $scope.deletedFilter = function(item) {
+        return !item.isDeleted;
+    };
 	
 	$scope.addToCart = function(product){
 		var userID = authService.getUserID();

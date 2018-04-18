@@ -16,7 +16,7 @@
         </div>
     </div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
-        <div dir-paginate="product in products | filter:query | itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
+        <div dir-paginate="product in products | filter:query | filter:deletedFilter | itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
             <div class="hover14 column">
                 <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
                     <div class="agile_top_brand_left_grid1">
@@ -30,7 +30,7 @@
                                     <button class="btn btn-danger" ng-if="admin" ng-click="deleteProd(product._id)">Delete</button>
                                 </div>
                                 <div class="snipcart-details">
-                                    <button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>
+                                    <button class="btn btn- info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>
                                     <span>{{product.cartQuantity}}</span>
                                     <button class="btn btn-danger" ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button>
                                 </div>
