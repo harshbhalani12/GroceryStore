@@ -226,9 +226,11 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
                 $scope.admin = true;
                 authService.setIsAdmin(true);
                 $scope.categories = [
-                    { id: '1', name: 'Category1' },
-                    { id: '2', name: 'Category2' },
-                    { id: '3', name: 'Category3' }
+                        { id: '1', name: 'Veggies & Fruits' },
+                        { id: '2', name: 'Beverages' },
+                        { id: '3', name: 'Bread & Bakery' },
+                        { id: '4', name: 'House Holds' },
+                        { id: '5', name: 'Branded Foods' }
                 ];
                 console.log($rootScope.prod);
                 console.log($rootScope.prod.productCategory);
@@ -321,6 +323,23 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 			$location.path('/login');
 		}
 	});
+
+    $scope.deletedFilter = function(prod){
+        return !prod.isDeleted;
+    }
+
+    $scope.categoryFilter = function(prod){
+        if($scope.value == null){
+            return true;
+        }
+        if(prod.productCategory == $scope.value){
+            console.log(true);
+            return true;
+        }else{
+            console.log(false);
+            return false;
+        }
+    }
 
     $scope.updateProd = function(prod) {
         $location.path('/update_products');

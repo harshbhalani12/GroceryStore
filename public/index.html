@@ -111,11 +111,11 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 			   </div> 
 			   <!-- Collect the nav links, forms, and other content for toggling -->
 				<div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
-					<ul class="nav navbar-nav nav_1">
-						<li><a href="products.html">Branded Foods</a></li>
-						<li><a href="household.html">Households</a></li>
+					<ul class="nav navbar-nav nav_1" ng-init="">
+						<li><a href="#" ng-click="value = '5'">Branded Foods</a></li>
+						<li><a href="#" ng-click="value = '4'">Households</a></li>
 						<li class="dropdown mega-dropdown active">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Veggies & Fruits</a>				
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-click="value ='1'">Veggies & Fruits</a>				
 							<!-- <div class="dropdown-menu mega-dropdown-menu w3ls_vegetables_menu">
 								<div class="w3ls_vegetables">
 									<ul>	
@@ -128,7 +128,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 						<!-- <li><a href="kitchen.html">Kitchen</a></li> -->
 						<!-- <li><a href="short-codes.html">Short Codes</a></li> -->
 						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Beverages</a>
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown" ng-click="value = '2'">Beverages</a>
 							<!-- <div class="dropdown-menu mega-dropdown-menu w3ls_vegetables_menu">
 								<div class="w3ls_vegetables">
 									<ul>
@@ -149,7 +149,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								</div>                  
 							</div>	
 						</li> -->
-						<li><a href="bread.html">Bread & Bakery</a></li>
+						<li><a href="#" ng-click="value = '3'">Bread & Bakery</a></li>
 					</ul>
 				 </div><!-- /.navbar-collapse -->
 			</nav>

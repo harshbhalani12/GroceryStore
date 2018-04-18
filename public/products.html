@@ -16,14 +16,17 @@
         </div>
     </div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
-        <div dir-paginate="product in products | filter:query | filter:deletedFilter | itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left" ng-if="!product.isDeleted">
+        <!-- <p>Value is {{value}}</p> -->
+        <div dir-paginate="product in products | filter:query |filter: deletedFilter| filter:categoryFilter| itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left productClass">
+            <!-- <p>{{product.productCategory == value}}</p>
+            <p>{{product.productCategory}}</p> -->
             <div class="hover14 column">
                 <div class="agile_top_brand_left_grid w3l_agile_top_brand_left_grid">
                     <div class="agile_top_brand_left_grid1">
                         <figure>
                             <div class="snipcart-item block">
                                 <div class="snipcart-thumb">
-                                    <img ng-src="images/{{product.productImage}}" alt="Image not fonund!" class="img-responsive" />
+                                    <img ng-src="images/{{product.productImage}}" alt="Image not fonund!" class="img-responsive"/>
                                     <p>{{product.productName}}</p>
                                     <h4>${{product.productPrice}}</h4>
                                     <button class="btn btn-primary" ng-if="admin" ng-click="updateProd(product)">Update</button>
