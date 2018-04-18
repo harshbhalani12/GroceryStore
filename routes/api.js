@@ -4,6 +4,8 @@ var mongoose = require('mongoose');
 var Product = mongoose.model('Product');
 var User = mongoose.model('User');
 var Cart = mongoose.model('Cart');
+var Purchase = mongoose.model('PurchaseRecord');
+var async = require('async');
 
 mongoose.Promise = global.Promise;
 
@@ -160,11 +162,11 @@ router.delete('/products/:id', function(req, res) {
                                 if(err){
                                     res.send(err);
                                 }
-                                res.json({'state':'Safe delete complete'});
                             });
                         }
                     }
                 }
+                res.json({'state':'Safe delete complete'});
             });
         });
     });
@@ -209,6 +211,44 @@ router.put('/cart',function(req,res){
         }
         else{
             res.json({'state':'Updated cart successfully!'});
+        }
+    });
+});
+
+router.post('/purchase',function(req,res){
+    var purchaseData = new Purchase(req.body);
+    var purchaseID;
+    purchaseData.save(function(err,purchase){
+        if(err){
+            res.send(err);
+        }
+        purchaseID = purchase._id;
+    });
+    var products = req.body.products;
+    products.forEach(function(product){
+        Product.findById(product._id,function(err, dbProduct){
+            if(err){
+                res.send(err);
+            }
+            else{
+                if(dbProduct.stockQuantity == product.quantity){
+                    dbProduct.isDeleted = true;
+                }
+                dbProduct.stockQuantity -= product.quantity;
+                dbProduct.save(function(err){
+                    if(err){
+                        res.send(err);
+                    }
+                });
+            }
+        });
+    });
+    Cart.findOneAndRemove({'userID':req.body.userID},function(err){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json({'state':true,'purchaseID':purchaseID});
         }
     });
 });

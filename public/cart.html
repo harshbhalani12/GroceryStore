@@ -1,0 +1,60 @@
+<h3>Your cart</h3>
+<table class="table table-bordered">
+    <thead>
+      <tr>
+        <th scope="col">S.No</th>
+        <th scope="col">Product Name</th>
+        <th scope="col">Quantity</th>
+        <th scope="col">Price</th>
+        <th scope="col">Amount</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr ng-repeat="product in cart[0].products">
+         <td>{{$index + 1}}</td>
+         <td>{{product.productName}}</td>
+         <td>{{product.quantity}}</td>
+         <td>${{product.price | number:2}}</td>
+         <td>${{(product.quantity * product.price) | number:2}}</td>
+      </tr>
+    </tbody>
+    <tfoot>
+        <td colspan="3"></td>
+        <td>Total</td>
+        <td>${{total | number:2}}</td>
+    </tfoot>
+  </table>
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <button class="btn btn-primary" ng-click="backToProducts()">Back to products</a>
+        </div>
+        <div class="col-md-5">
+            <button class="btn btn-success" data-toggle="modal" data-target="#myModal" style="float:right">Checkout</button>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Confirm Checkout</h4>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to checkout?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success" ng-click="checkout()">Yes</button>
+        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+

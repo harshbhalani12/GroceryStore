@@ -44,10 +44,13 @@ var categorySchema = new mongoose.Schema({
 });
 
 var purchaseRecord = new mongoose.Schema({
-    productID: { type: Schema.Types.ObjectId, ref: 'Product' },
-    userID: { type: Schema.Types.ObjectId, ref: 'User' },
-    quantity: Number,
-    price: Number,
+    userID: { type: Schema.Types.ObjectId },
+    products: [{
+        _id: Schema.Types.ObjectId,
+        productName: String,
+        quantity: Number,
+        price: Number
+    }],
     timestamp: Date
 });
 

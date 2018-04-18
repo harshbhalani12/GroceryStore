@@ -262,6 +262,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
 
 app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$location, authService,cartService,msgService,$http) {
 
+    cartService.setCart([]);
 	$scope.product = {};
 	var userProdQuantityDictMap = {};
     $scope.$watch(authService.getAuthenticated, function(auth) {
@@ -292,6 +293,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
                 if(cart && cart.length > 0){
                     $scope.cart = cart;
                     cartService.setCart(cart[0].products);
+                    userProdQuantityDictMap = {};
                     userProdQuantityDictMap[user.userID] = {};
                     for(var i = 0; i < cart[0].products.length; i++){
                         userProdQuantityDictMap[user.userID][cart[0].products[i]._id] = cart[0].products[i].quantity;
@@ -306,7 +308,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 				for(var product in $scope.products){
                     $scope.products[product].productPrice = $filter('number')($scope.products[product].productPrice,2);
                     userProdQuantityDictMap = cartService.getProductQuantityDict();
-                    if(userProdQuantityDictMap[user.userID][$scope.products[product]._id]){
+                    if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]){
                         $scope.products[product].cartQuantity = userProdQuantityDictMap[user.userID][$scope.products[product]._id];
                     }
                     else{
@@ -334,7 +336,9 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 	
 	$scope.addToCart = function(product){
 		var userID = authService.getUserID();
-		if(!userProdQuantityDictMap[userID][product._id] || userProdQuantityDictMap[userID][product._id] == 0){
+		if(!userProdQuantityDictMap || !userProdQuantityDictMap[userID] || !userProdQuantityDictMap[userID][product._id]){
+            userProdQuantityDictMap = {};
+            userProdQuantityDictMap[userID] = {};
             userProdQuantityDictMap[userID][product._id] = 1;
             cartService.setProductQuantityDict(userProdQuantityDictMap);
 			var prodObj = {
@@ -408,7 +412,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
     };
 });
 
-app.controller('cartCtrl',function($scope,$filter,$resource,$location,authService,cartService){
+app.controller('cartCtrl',function($scope,$filter,$resource,$http,$location,authService,cartService,msgService){
     $scope.cart = [],$scope.total = 0;
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
@@ -430,10 +434,15 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$location,authServic
 			}
 			var Cart = $resource('/api/cart/'+user.userID);
 			Cart.query({},function(cart){
-				$scope.cart = cart;
-                cartService.setCart(cart);
-                for(var i = 0; i < cart[0].products.length; i++){
-                    $scope.total += cart[0].products[i].quantity * cart[0].products[i].price;
+                if(!cart || cart.length == 0){
+                    console.log("Cart is empty!");
+                }
+                else{
+                    $scope.cart = cart;
+                    cartService.setCart(cart);
+                    for(var i = 0; i < cart[0].products.length; i++){
+                        $scope.total += cart[0].products[i].quantity * cart[0].products[i].price;
+                    }
                 }
 			});
 		}
@@ -443,6 +452,33 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$location,authServic
     });
     $scope.backToProducts = function() {
         $location.path('/');
+    };
+
+    $scope.checkout = function(){
+        $(".modal-backdrop").hide();
+        $("body").attr("class","modal-close");
+        var cart = cartService.getCart();
+        if(!cart || cart.length == 0){
+            msgService.setErrorMessage("Your cart is empty, please add items before checkout!");
+        }
+        else{
+            var purchaseObj = {};
+            var productArr = cart[0].products;
+            var time = new Date();
+            purchaseObj['products'] = productArr;
+            purchaseObj['timestamp'] = time;
+            purchaseObj['userID'] = authService.getUserID();
+            $http.post('/api/purchase',purchaseObj).then(function success(res){
+                console.log(res);
+                msgService.setSuccessMessage("Purchase completed! Purchase ID: "+res.data.purchaseID);
+                msgService.setErrorMessage("");
+                cartService.setCart([]);
+                cartService.setProductQuantityDict({});
+                $location.path('/');
+            },function error(err){
+                console.log(err);
+            });
+        }
     };
 
 });
