@@ -51,7 +51,8 @@ var purchaseRecord = new mongoose.Schema({
         quantity: Number,
         price: Number
     }],
-    timestamp: Date
+    timestamp: Date,
+    amount: Number
 });
 
 var cart = new mongoose.Schema({

@@ -215,43 +215,70 @@ router.put('/cart',function(req,res){
     });
 });
 
-router.post('/purchase',function(req,res){
-    var purchaseData = new Purchase(req.body);
-    var purchaseID;
-    purchaseData.save(function(err,purchase){
-        if(err){
-            res.send(err);
-        }
-        purchaseID = purchase._id;
-    });
-    var products = req.body.products;
-    products.forEach(function(product){
-        Product.findById(product._id,function(err, dbProduct){
-            if(err){
-                res.send(err);
-            }
-            else{
-                if(dbProduct.stockQuantity == product.quantity){
-                    dbProduct.isDeleted = true;
-                }
-                dbProduct.stockQuantity -= product.quantity;
-                dbProduct.save(function(err){
-                    if(err){
-                        res.send(err);
-                    }
-                });
-            }
-        });
-    });
-    Cart.findOneAndRemove({'userID':req.body.userID},function(err){
+router.get('/purchase/user/:userID',function(req,res){
+    Purchase.find({'userID':req.params.userID},function(err,purchases){
         if(err){
             res.send(err);
         }
         else{
-            res.json({'state':true,'purchaseID':purchaseID});
+            res.json(purchases);
         }
     });
 });
+
+router.get('/purchase/:purchaseID',function(req,res){
+    Purchase.findById(req.params.purchaseID,function(err,purchase){
+        if(err){
+            res.send(err);
+        }
+        else{
+            res.json(purchase);
+        }
+    });
+});
+
+router.post('/purchase',function(req,res){
+    var purchaseData = new Purchase(req.body);
+    purchaseData.save(function(err,purchase){
+        if(err){
+            res.send(err);
+        }
+        else{
+            var products = req.body.products;
+            products.forEach(function(product){
+                Product.findById(product._id,function(err, dbProduct){
+                    if(err){
+                        res.send(err);
+                    }
+                    else{
+                        if(dbProduct.stockQuantity == product.quantity){
+                            dbProduct.isDeleted = true;
+                            dbProduct.stockQuantity -= product.quantity;
+                        }
+                        else{
+                            dbProduct.stockQuantity -= product.quantity;
+                        }
+                        dbProduct.save(function(err){
+                            if(err){
+                                res.send(err);
+                            }
+                        });
+                    }
+                });
+            });
+            Cart.findOneAndRemove({'userID':req.body.userID},function(err){
+                if(err){
+                    res.send(err);
+                }
+                else{
+                    res.json({'state':true,'purchaseID':purchase._id});
+                }
+            });
+        }
+    });
+    
+});
+
 	// }
 // router.route('/posts')
 

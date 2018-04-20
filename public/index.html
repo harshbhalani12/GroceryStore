@@ -59,6 +59,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 								<li ng-if="admin"><a href="#!manage_products">Manage Products</a></li>
 								<li ng-if="!authenticated"><a href="#!login">Login</a></li>
 								<li ng-if="!authenticated"><a href="#!register">Register</a></li>
+								<li ng-if="authenticated"><a href="#!history">Purchase History</a></li>
 								<li ng-if="authenticated"><a href="" ng-click="signout()">Signout</a></li>
 							</ul>
 						</div>                  
@@ -159,37 +160,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
 		<div class="clearfix"></div>
 	</div>
 <!-- footer -->
-	<div class="footer">
-		<div class="container">
-			<div class="col-md-3 w3_footer_grid">
-				<h3>information</h3>
-				<ul class="w3_footer_grid_list">
-					<li><a href="events.html">Events</a></li>
-					<li><a href="about.html">About Us</a></li>
-					<li><a href="products.html">Best Deals</a></li>
-					<li><a href="services.html">Services</a></li>
-					<li><a href="short-codes.html">Short Codes</a></li>
-				</ul>
-			</div>
-			<div class="col-md-3 w3_footer_grid">
-				<h3>policy info</h3>
-				<ul class="w3_footer_grid_list">
-					<li><a href="faqs.html">FAQ</a></li>
-					<li><a href="privacy.html">privacy policy</a></li>
-					<li><a href="privacy.html">terms of use</a></li>
-				</ul>
-			</div>
-			<div class="col-md-3 w3_footer_grid">
-				<h3>what in stores</h3>
-				<ul class="w3_footer_grid_list">
-					<li><a href="pet.html">Pet Food</a></li>
-					<li><a href="frozen.html">Frozen Snacks</a></li>
-					<li><a href="kitchen.html">Kitchen</a></li>
-					<li><a href="products.html">Branded Foods</a></li>
-					<li><a href="household.html">Households</a></li>
-				</ul>
-			</div>
-			<div class="clearfix"></div>
+	<div class="footer">	
 			<div class="wthree_footer_copy">
 				<p>© 2016 Grocery Store. All rights reserved | Design by <a href="http://w3layouts.com/">W3layouts</a></p>
 			</div>
@@ -220,7 +191,7 @@ $(document).ready(function(){
 				containerID: 'toTop', // fading element id
 				containerHoverID: 'toTopHover', // fading element hover id
 				scrollSpeed: 1200,
-				easingType: 'linear' 
+				easingTye: 'linear' 
 				};
 			*/
 								

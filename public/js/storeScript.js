@@ -27,6 +27,14 @@ app.config(function($routeProvider) {
             templateUrl: 'cart.html',
             controller: 'cartCtrl'
         })
+        .when('/history',{
+            templateUrl: 'purchase_history.html',
+            controller: 'historyCtrl' 
+        })
+        .when('/view_purchase/:purchaseID',{
+            templateUrl: 'view_purchase.html',
+            controller: 'viewPurchaseCtrl' 
+        })
         .otherwise({
             redirectTo: '/'
         });
@@ -491,6 +499,7 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$http,$location,auth
             purchaseObj['products'] = productArr;
             purchaseObj['timestamp'] = time;
             purchaseObj['userID'] = authService.getUserID();
+            purchaseObj['amount'] = $scope.total;
             $http.post('/api/purchase',purchaseObj).then(function success(res){
                 console.log(res);
                 msgService.setSuccessMessage("Purchase completed! Purchase ID: "+res.data.purchaseID);
@@ -503,7 +512,77 @@ app.controller('cartCtrl',function($scope,$filter,$resource,$http,$location,auth
             });
         }
     };
+});
 
+app.controller('historyCtrl',function($scope,$resource,$location,authService){
+    $scope.$watch(authService.getAuthenticated, function(auth) {
+        $scope.authenticated = auth;
+    });
+
+    $scope.$watch(authService.getIsAdmin, function(admin) {
+        $scope.admin = admin;
+    });
+
+    var User = $resource('/api/user');
+    User.get({},function(user){
+		if(user.userID){
+			authService.setUserID(user.userID);
+			$scope.authenticated = true;
+			authService.setAuthenticated(true);
+			if(user.admin){
+				$scope.admin = true;
+				authService.setIsAdmin(true);
+            }
+            var Purchase = $resource('/api/purchase/user/'+user.userID);
+            Purchase.query({},function(purchases){
+                $scope.purchases = purchases;
+            });
+        }
+        else{
+            $location.path('/login');
+        }
+    });
+    $scope.backToProducts = function() {
+        $location.path('/');
+    };
+
+    $scope.viewPurchase = function(purchaseID){
+        $location.path('/view_purchase/'+purchaseID);
+    };
+
+});
+
+app.controller('viewPurchaseCtrl',function($scope,$resource,$location,$routeParams,authService){
+    $scope.$watch(authService.getAuthenticated, function(auth) {
+        $scope.authenticated = auth;
+    });
+
+    $scope.$watch(authService.getIsAdmin, function(admin) {
+        $scope.admin = admin;
+    });
+
+    var User = $resource('/api/user');
+    User.get({},function(user){
+		if(user.userID){
+			authService.setUserID(user.userID);
+			$scope.authenticated = true;
+			authService.setAuthenticated(true);
+			if(user.admin){
+				$scope.admin = true;
+				authService.setIsAdmin(true);
+            }
+            var Purchase = $resource('/api/purchase/:purchaseID');
+            Purchase.get({'purchaseID': $routeParams.purchaseID},function(purchase){
+                $scope.purchase = purchase;
+            });
+        }
+        else{
+            $location.path('/login');
+        }
+    });
+    $scope.backToPurchaseHistory = function() {
+        $location.path('/history');
+    };
 });
 
 app.factory('msgService', function() {
