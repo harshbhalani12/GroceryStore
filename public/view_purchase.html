@@ -1,30 +1,30 @@
-<h1> Purchase #{{purchase._id}} </h1>
-<h2>Purchase Date & Time: {{purchase.timestamp | date: 'MM/dd/yyyy HH:mm:ss'}}</h2>
+<h4> Purchase #{{purchase._id}} </h4>
+<h4>Purchase Date & Time: {{purchase.timestamp | date: 'MM/dd/yyyy HH:mm:ss'}}</h4>
 <table class="table table-bordered">
     <thead>
-      <tr>
-        <th scope="col">S.No</th>
-        <th scope="col">Product Name</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Price</th>
-        <th scope="col">Amount</th>
-      </tr>
+        <tr>
+            <th scope="col">S.No</th>
+            <th scope="col">Product Name</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Price</th>
+            <th scope="col">Amount</th>
+        </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="product in purchase.products">
-         <td>{{$index + 1}}</td>
-         <td>{{product.productName}}</td>
-         <td>{{product.quantity}}</td>
-         <td>${{product.price | number:2}}</td>
-         <td>${{(product.quantity * product.price) | number:2}}</td>
-      </tr>
+        <tr ng-repeat="product in purchase.products">
+            <td>{{$index + 1}}</td>
+            <td>{{product.productName}}</td>
+            <td>{{product.quantity}}</td>
+            <td>${{product.price | number:2}}</td>
+            <td>${{(product.quantity * product.price) | number:2}}</td>
+        </tr>
     </tbody>
     <tfoot>
         <td colspan="3"></td>
         <td>Total</td>
         <td>${{purchase.amount | number:2}}</td>
     </tfoot>
-  </table>
+</table>
 <div class="container">
     <div class="row">
         <div class="col-md-4">
