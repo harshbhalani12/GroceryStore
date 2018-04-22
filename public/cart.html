@@ -7,21 +7,24 @@
         <th scope="col">Quantity</th>
         <th scope="col">Price</th>
         <th scope="col">Amount</th>
+        <th scope="col">Remove</th>
       </tr>
     </thead>
     <tbody>
       <tr ng-repeat="product in cart[0].products">
          <td>{{$index + 1}}</td>
          <td>{{product.productName}}</td>
-         <td>{{product.quantity}}</td>
+         <td><button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger" ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button> </td>
          <td>${{product.price | number:2}}</td>
          <td>${{(product.quantity * product.price) | number:2}}</td>
+         <td><btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span></td>
       </tr>
     </tbody>
     <tfoot>
         <td colspan="3"></td>
         <td>Total</td>
         <td>${{total | number:2}}</td>
+        <td></td>
     </tfoot>
   </table>
 <div class="container">
@@ -34,7 +37,9 @@
         </div>
     </div>
 </div>
-
+<modal visible="showModal">
+  {{error_message}}
+</modal>
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
