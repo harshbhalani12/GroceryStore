@@ -1,9 +1,6 @@
 <div class="w3ls_w3l_banner_nav_right_grid">
-    <div class="w3l_banner_nav_right_banner4">
-        <h3>Best Deals For New Products<span class="blink_me"></span></h3>
-    </div><br/>
     <h3>Browse Products</h3>
-    <p class="alert alert-danger" ng-show="error_message" id="error_message">{{error_message}}</p>
+    
     <p class="alert alert-success" ng-show="success_message" id="success_message">{{success_message}}</p>
     <div class="row">
         <div class="col-md-4">
@@ -45,3 +42,6 @@
         </div>
     </div>
 </div>
+<modal visible="showModal">
+    {{error_message}}
+</modal>

@@ -272,6 +272,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
 
 app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$location, authService,cartService,msgService,$http) {
 
+    $scope.showModal = false;
     cartService.setCart([]);
 	$scope.product = {};
 	var userProdQuantityDictMap = {};
@@ -379,7 +380,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 				price: product.productPrice
 			};
 			product.cartQuantity = 1;
-			cartService.addToCart(prodObj);
+            cartService.addToCart(prodObj);
             msgService.reset();
             console.log(cartService.getCart());
 			$http.put('/api/cart',{'products':cartService.getCart(),'userID':authService.getUserID()}).then(function success(response){
@@ -406,17 +407,20 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
                 }, function error(err) {
                     console.log("Error in adding to cart!");
                 });
+                product.errorMsg = "";
                 msgService.reset();
             } else {
                 msgService.setErrorMessage("Cannot add any more items of this type to the cart!");
+                $scope.toggleModal();
             }
         }
     }
     
     $scope.removeFromCart = function(product){
         var userID = authService.getUserID();
-        if(!userProdQuantityDictMap[userID] || userProdQuantityDictMap[userID][product._id] == 0){
+        if(!userProdQuantityDictMap || !userProdQuantityDictMap[userID] || userProdQuantityDictMap[userID][product._id] == 0 || product.cartQuantity == 0){
             msgService.setErrorMessage("Cannot remove item, item is not in cart!");
+            $scope.toggleModal();
         }
         else{
             userProdQuantityDictMap[userID][product._id] -= 1;
@@ -440,6 +444,10 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
     $scope.goToCart = function() {
         console.log("Inside go to cart function");
         $location.path('/cart');
+    };
+
+    $scope.toggleModal = function(){
+        $scope.showModal = !$scope.showModal;
     };
 });
 
@@ -706,3 +714,43 @@ app.factory('cartService', function() {
         }
     }
 });
+
+app.directive('modal', function () {
+    return {
+      template: '<div class="modal fade">' + 
+          '<div class="modal-dialog">' + 
+            '<div class="modal-content">' + 
+              '<div class="modal-header">' + 
+                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
+                '<h4 class="modal-title">Error</h4>' + 
+              '</div>' + 
+              '<div class="modal-body" ng-transclude></div>' + 
+            '</div>' + 
+          '</div>' + 
+        '</div>',
+      restrict: 'E',
+      transclude: true,
+      replace:true,
+      scope:true,
+      link: function postLink(scope, element, attrs) {
+          scope.$watch(attrs.visible, function(value){
+          if(value == true)
+            $(element).modal('show');
+          else
+            $(element).modal('hide');
+        });
+
+        $(element).on('shown.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = true;
+          });
+        });
+
+        $(element).on('hidden.bs.modal', function(){
+          scope.$apply(function(){
+            scope.$parent[attrs.visible] = false;
+          });
+        });
+      }
+    };
+  });
