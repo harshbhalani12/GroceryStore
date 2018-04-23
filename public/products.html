@@ -29,11 +29,11 @@
                                     <button class="btn btn-primary" ng-if="admin" ng-click="updateProd(product)">Update</button>
                                     <button class="btn btn-danger" ng-if="admin" ng-click="deleteProd(product._id)">Delete</button>
                                 </div>
-                                <div class="snipcart-details" style="min-height: 6em">
+                                <div class="snipcart-details" style="min-height: 5.2em">
                                     <button class="btn" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>
                                     <span>{{product.cartQuantity}}</span>
                                     <button class="btn btn-danger" ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button>
-                                    <button style="margin-top: 2em" class="btn btn-danger" ng-disabled="!product.cartQuantity" ng-click="removeAllQuantity(product)">Remove From Cart</button></div>
+                                    <button style="margin-top: 1em" class="btn btn-danger" ng-show="product.cartQuantity" ng-click="removeAllQuantity(product)">Remove From Cart</button></div>
                                 </div>
                             </div>
                         </figure>

@@ -298,7 +298,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 				authService.setIsAdmin(true);
             }
             userProdQuantityDictMap = cartService.getProductQuantityDict();
-            if(!userProdQuantityDictMap){
+            if(!userProdQuantityDictMap || !userProdQuantityDictMap[user.userID]){
                 userProdQuantityDictMap = {};
                 userProdQuantityDictMap[user.userID] = {};
                 cartService.setProductQuantityDict(userProdQuantityDictMap);
@@ -336,7 +336,11 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
                         if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity']){
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity'] = $scope.products[product].stockQuantity;
                         }
-                        if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity']){
+                        if($scope.products[product].stockQuantity === 0){
+                            $scope.products[product].cartQuantity = 0;
+                            userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity'] = 0;
+                        }
+                        else if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity']){
                             $scope.products[product].cartQuantity = userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity'];
                         }
                         else{
@@ -385,9 +389,14 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
     };
 	
 	$scope.addToCart = function(product){
+        if(product.stockQuantity === 0){
+            msgService.setErrorMessage("Cannot add any more items of this type to the cart!");
+            $scope.toggleModal();
+            return;
+        }
         var userID = authService.getUserID();
         var userProdQuantityDictMap = cartService.getProductQuantityDict();
-		if(!userProdQuantityDictMap[userID][product._id]['cartQuantity']){
+		if(typeof userProdQuantityDictMap[userID][product._id]['cartQuantity'] == "undefined"){
             userProdQuantityDictMap[userID][product._id]['cartQuantity'] = 1;
             cartService.setProductQuantityDict(userProdQuantityDictMap);
 			var prodObj = {
@@ -407,7 +416,6 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 			});
 		}
 		else{
-            // userProdQuantityDictMap = cartService.getProductQuantityDict();
 			if(userProdQuantityDictMap[userID][product._id]['cartQuantity'] < userProdQuantityDictMap[userID][product._id]['stockQuantity']){
                 userProdQuantityDictMap[userID][product._id]['cartQuantity'] += 1;
                 cartService.setProductQuantityDict(userProdQuantityDictMap);
