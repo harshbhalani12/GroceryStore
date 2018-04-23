@@ -333,7 +333,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
                         if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]){
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id] = {};
                         }
-                        else if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity']){
+                        if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity']){
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity'] = $scope.products[product].stockQuantity;
                         }
                         if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity']){
