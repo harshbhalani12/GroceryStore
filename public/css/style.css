@@ -45,6 +45,7 @@ body a:hover{
 	margin: 0 auto;
 	left:0;
 	z-index:9999;
+	height:50px;
 }
 span.glyphicon.glyphicon-shopping-cart.my-cart-icon.my-cart-icon-affix {
 	position: relative !important;

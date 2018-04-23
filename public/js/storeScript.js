@@ -260,12 +260,12 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
         $scope.admin = admin;
     });
 
-    $scope.$watch("currentPage + numPerPage", function() {
-        var begin = (($scope.currentPage - 1) * $scope.numPerPage),
-            end = begin + $scope.numPerPage;
+    // $scope.$watch("currentPage + numPerPage", function() {
+    //     var begin = (($scope.currentPage - 1) * $scope.numPerPage),
+    //         end = begin + $scope.numPerPage;
 
-        $scope.filteredTodos = $scope.todos.slice(begin, end);
-    });
+    //     $scope.filteredTodos = $scope.todos.slice(begin, end);
+    // });
 
 });
 

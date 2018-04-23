@@ -129,11 +129,37 @@ router.post('/products/:id', multer(multerConf).single('productImage'), function
         putBody.isDeleted ? product.isDeleted = putBody.isDeleted : {};
 
         console.log(product);
+        console.log("hello from cart");
+        Cart.find({},function(err,carts){
+            for(var cart in carts){
+                var prodArr = carts[cart].products;
+                
+                for(var i = 0; i < prodArr.length; i++){
+                    console.log(prodArr[i].id);
+                    console.log(product._id);
+                    if(prodArr[i].id == req.params.id){
+                        if(product.stockQuantity === 0){
+                            prodArr.splice(i,1);
+                        }else{
+                            prodArr[i].quantity = product.stockQuantity;
+                            prodArr[i].productName = product.productName;
+                            prodArr[i].price =  product.productPrice;
+                    }
+                }
+                carts[cart].products = prodArr;
+                    carts[cart].save(function(err){
+                        if(err){
+                            res.send(err);
+                        }
+                    });
+                }
+            }
+        });
         product.save(function(err) {
             if (err) {
                 res.send(err);
             }
-            res.json({ state: 'Updated Successfully!' });
+            res.redirect('/#!');
         });
     });
 });
