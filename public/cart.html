@@ -20,19 +20,6 @@
         </tr>
     </thead>
     <tbody>
-<<<<<<< Updated upstream
-        <tr ng-repeat="product in cart[0].products">
-            <td class="black">{{$index + 1}}</td>
-            <td class="black">{{product.productName}}</td>
-            <td><button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold" class="black">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger"
-                    ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button> </td>
-            <td class="black"> ${{product.price | number:2}}</td>
-            <td class="black">${{(product.quantity * product.price) | number:2}}</td>
-            <td>
-                <btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span>
-            </td>
-        </tr>
-=======
       <tr ng-repeat="product in cart[0].products | filter:query">
          <td>{{$index + 1}}</td>
          <td>{{product.productName}}</td>
@@ -41,7 +28,6 @@
          <td>${{(product.quantity * product.price) | number:2}}</td>
          <td><btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span></td>
       </tr>
->>>>>>> Stashed changes
     </tbody>
     <tfoot>
         <td colspan="3"></td>
