@@ -521,7 +521,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $
                 msgService.setErrorMessage("");
                 cartService.setCart([]);
                 cartService.setProductQuantityDict({});
-                $location.path('/');
+                //$location.path('/');
             }, function error(err) {
                 console.log(err);
             });

@@ -8,6 +8,7 @@
     }
 </style>
 <h3>Your cart</h3>
+<p class="alert alert-success">{{success_message}}</p>
 <table class="table table-bordered" id="maintable">
     <thead>
         <tr>
@@ -45,7 +46,7 @@
             <button class="btn btn-primary" ng-click="backToProducts()">Back to products</a>
         </div>
         <div class="col-md-5" ng-if="cart[0].products.length">
-            <button class="btn btn-success" data-toggle="modal" data-target="#myModal" style="float:right">Checkout</button>
+            <button class="btn btn-success" data-toggle="modal" data-target="#myModal" style="float:right" ng-if="!success_message">Checkout</button>
         </div>
     </div>
 </div>
@@ -67,7 +68,7 @@
                 <p>Are you sure you want to checkout?</p>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-success" ng-click="checkout()">Yes</button>
+                <button type="button" class="btn btn-success" ng-click="checkout()" data-dismiss="modal">Yes</button>
                 <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
             </div>
         </div>
