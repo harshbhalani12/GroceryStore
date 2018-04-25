@@ -27,20 +27,20 @@ app.config(function($routeProvider) {
             templateUrl: 'cart.html',
             controller: 'productCtrl'
         })
-        .when('/history',{
+        .when('/history', {
             templateUrl: 'purchase_history.html',
-            controller: 'historyCtrl' 
+            controller: 'historyCtrl'
         })
-        .when('/view_purchase/:purchaseID',{
+        .when('/view_purchase/:purchaseID', {
             templateUrl: 'view_purchase.html',
-            controller: 'viewPurchaseCtrl' 
+            controller: 'viewPurchaseCtrl'
         })
         .otherwise({
             redirectTo: '/'
         });
 });
 
-app.controller('headerController', function($scope, $http, $resource, $location, authService,cartService) {
+app.controller('headerController', function($scope, $rootScope, $http, $resource, $location, authService, cartService) {
     var User = $resource('/api/user');
     User.get({}, function(user) {
         if (user.name) {
@@ -65,12 +65,13 @@ app.controller('headerController', function($scope, $http, $resource, $location,
             authService.reset();
             $scope.authenticated = false;
             $scope.admin = false;
+            $rootScope.username = '';
             $location.path('/login');
         });
     };
 });
 
-app.controller('authController', function($scope, $http, $location, msgService, authService) {
+app.controller('authController', function($scope, $rootScope, $http, $location, msgService, authService) {
     $scope.user = { email: '', password: '' };
     $scope.error_message = '';
     $scope.strength_message = '';
@@ -86,6 +87,7 @@ app.controller('authController', function($scope, $http, $location, msgService, 
                 authService.setAuthenticated(true);
                 authService.setIsAdmin(response.data.isAdmin);
                 msgService.reset();
+                $rootScope.username = response.data.name;
                 $location.path('/');
             } else {
                 $scope.error_message = response.data.message;
@@ -212,10 +214,10 @@ app.controller('manageProductsCtrl', function($scope, $resource, $location, auth
 
 });
 
-app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resource, $location, authService) {
+app.controller('updateProductsCtrl', function($scope, $rootScope, $filter, $resource, $location, authService) {
     // auto-filling details of the product
     $scope.productName = $rootScope.prod.productName;
-    $scope.price = $filter('number')($rootScope.prod.productPrice,2);
+    $scope.price = $filter('number')($rootScope.prod.productPrice, 2);
     $scope.quantity = $rootScope.prod.stockQuantity;
 
     $scope.id = {
@@ -233,11 +235,11 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
                 $scope.admin = true;
                 authService.setIsAdmin(true);
                 $scope.categories = [
-                        { id: '1', name: 'Veggies & Fruits' },
-                        { id: '2', name: 'Beverages' },
-                        { id: '3', name: 'Bread & Bakery' },
-                        { id: '4', name: 'House Holds' },
-                        { id: '5', name: 'Branded Foods' }
+                    { id: '1', name: 'Veggies & Fruits' },
+                    { id: '2', name: 'Beverages' },
+                    { id: '3', name: 'Bread & Bakery' },
+                    { id: '4', name: 'House Holds' },
+                    { id: '5', name: 'Branded Foods' }
                 ];
                 console.log($rootScope.prod);
                 console.log($rootScope.prod.productCategory);
@@ -269,11 +271,11 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter,$resou
 
 });
 
-app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$location, authService,cartService,msgService,$http) {
+app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $location, authService, cartService, msgService, $http) {
 
     $scope.total = 0.00;
     $scope.showModal = false;
-	var userProdQuantityDictMap = {};
+    var userProdQuantityDictMap = {};
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -288,85 +290,81 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         $scope.error_message = message;
     });
     var User = $resource('/api/user');
-    User.get({},function(user){
-		if(user.userID){
-			authService.setUserID(user.userID);
-			$scope.authenticated = true;
-			authService.setAuthenticated(true);
-			if(user.admin){
-				$scope.admin = true;
-				authService.setIsAdmin(true);
+    User.get({}, function(user) {
+        if (user.userID) {
+            authService.setUserID(user.userID);
+            $scope.authenticated = true;
+            authService.setAuthenticated(true);
+            if (user.admin) {
+                $scope.admin = true;
+                authService.setIsAdmin(true);
             }
             userProdQuantityDictMap = cartService.getProductQuantityDict();
-            if(!userProdQuantityDictMap || !userProdQuantityDictMap[user.userID]){
+            if (!userProdQuantityDictMap || !userProdQuantityDictMap[user.userID]) {
                 userProdQuantityDictMap = {};
                 userProdQuantityDictMap[user.userID] = {};
                 cartService.setProductQuantityDict(userProdQuantityDictMap);
             }
-            var Cart = $resource('/api/cart/:userID',{userID:user.userID});
+            var Cart = $resource('/api/cart/:userID', { userID: user.userID });
             Cart.query(function(cart) {
                 $scope.cart = cart;
-                if(cart && cart.length > 0){
+                if (cart && cart.length > 0) {
                     cartService.setCart(cart[0].products);
-                    for(var i = 0; i < cart[0].products.length; i++){
-                        if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID]){
+                    for (var i = 0; i < cart[0].products.length; i++) {
+                        if (userProdQuantityDictMap && userProdQuantityDictMap[user.userID]) {
                             userProdQuantityDictMap[user.userID][cart[0].products[i]._id] = {};
                             userProdQuantityDictMap[user.userID][cart[0].products[i]._id]['cartQuantity'] = cart[0].products[i].quantity;
                         }
                         $scope.total += cart[0].products[i].quantity * cart[0].products[i].price;
                     }
                     cartService.setProductQuantityDict(userProdQuantityDictMap);
-                }
-                else{
+                } else {
                     cartService.setCart([]);
                 }
                 var Products = $resource('/api/products');
-                Products.query(function(products){
+                Products.query(function(products) {
                     $scope.products = products;
-                    for(var product in $scope.products){
-                        $scope.products[product].productPrice = $filter('number')($scope.products[product].productPrice,2);
-                        if(!userProdQuantityDictMap || !userProdQuantityDictMap[user.userID]){
+                    for (var product in $scope.products) {
+                        $scope.products[product].productPrice = $filter('number')($scope.products[product].productPrice, 2);
+                        if (!userProdQuantityDictMap || !userProdQuantityDictMap[user.userID]) {
                             userProdQuantityDictMap = {};
                             userProdQuantityDictMap[user.userID] = {};
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id] = {};
                         }
-                        if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]){
+                        if (!userProdQuantityDictMap[user.userID][$scope.products[product]._id]) {
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id] = {};
                         }
-                        if(!userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity']){
+                        if (!userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity']) {
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id]['stockQuantity'] = $scope.products[product].stockQuantity;
                         }
-                        if($scope.products[product].stockQuantity === 0){
+                        if ($scope.products[product].stockQuantity === 0) {
                             $scope.products[product].cartQuantity = 0;
                             userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity'] = 0;
-                        }
-                        else if(userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity']){
+                        } else if (userProdQuantityDictMap && userProdQuantityDictMap[user.userID] && userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity']) {
                             $scope.products[product].cartQuantity = userProdQuantityDictMap[user.userID][$scope.products[product]._id]['cartQuantity'];
-                        }
-                        else{
+                        } else {
                             $scope.products[product].cartQuantity = 0;
                         }
                     }
                 });
             });
-		}
-		else{
-			$location.path('/login');
-		}
-	});
+        } else {
+            $location.path('/login');
+        }
+    });
 
-    $scope.deletedFilter = function(prod){
+    $scope.deletedFilter = function(prod) {
         return !prod.isDeleted;
     }
 
-    $scope.categoryFilter = function(prod){
-        if($scope.value == null){
+    $scope.categoryFilter = function(prod) {
+        if ($scope.value == null) {
             return true;
         }
-        if(prod.productCategory == $scope.value){
+        if (prod.productCategory == $scope.value) {
             console.log(true);
             return true;
-        }else{
+        } else {
             console.log(false);
             return false;
         }
@@ -383,49 +381,48 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         $http.delete('/api/products/' + prod).then(function(response) {});
         $location.path('/products');
     };
-    
+
     $scope.deletedFilter = function(item) {
         return !item.isDeleted;
     };
-	
-	$scope.addToCart = function(product){
-        if(product.stockQuantity === 0){
+
+    $scope.addToCart = function(product) {
+        if (product.stockQuantity === 0) {
             msgService.setErrorMessage("Cannot add any more items of this type to the cart!");
             $scope.toggleModal();
             return;
         }
         var userID = authService.getUserID();
         var userProdQuantityDictMap = cartService.getProductQuantityDict();
-		if(typeof userProdQuantityDictMap[userID][product._id]['cartQuantity'] == "undefined"){
+        if (typeof userProdQuantityDictMap[userID][product._id]['cartQuantity'] == "undefined") {
             userProdQuantityDictMap[userID][product._id]['cartQuantity'] = 1;
             cartService.setProductQuantityDict(userProdQuantityDictMap);
-			var prodObj = {
-				_id: product._id,
-				productName: product.productName,
-				quantity: 1,
-				price: product.productPrice
-			};
-			product.cartQuantity = 1;
+            var prodObj = {
+                _id: product._id,
+                productName: product.productName,
+                quantity: 1,
+                price: product.productPrice
+            };
+            product.cartQuantity = 1;
             cartService.addToCart(prodObj);
             msgService.reset();
             console.log(cartService.getCart());
-			$http.put('/api/cart',{'products':cartService.getCart(),'userID':authService.getUserID()}).then(function success(response){
-				console.log("Added to cart successfully");
-			},function error(err){
-				console.log("Error in adding to cart!");
-			});
-		}
-		else{
-			if(userProdQuantityDictMap[userID][product._id]['cartQuantity'] < userProdQuantityDictMap[userID][product._id]['stockQuantity']){
+            $http.put('/api/cart', { 'products': cartService.getCart(), 'userID': authService.getUserID() }).then(function success(response) {
+                console.log("Added to cart successfully");
+            }, function error(err) {
+                console.log("Error in adding to cart!");
+            });
+        } else {
+            if (userProdQuantityDictMap[userID][product._id]['cartQuantity'] < userProdQuantityDictMap[userID][product._id]['stockQuantity']) {
                 userProdQuantityDictMap[userID][product._id]['cartQuantity'] += 1;
                 cartService.setProductQuantityDict(userProdQuantityDictMap);
-				cartService.increaseCartQuantity(product._id);
-				var prodObj = {
-					_id: product._id,
-					productName: product.productName,
-					quantity: cartService.getCartQuantity(product._id),
-					price: product.productPrice
-				};
+                cartService.increaseCartQuantity(product._id);
+                var prodObj = {
+                    _id: product._id,
+                    productName: product.productName,
+                    quantity: cartService.getCartQuantity(product._id),
+                    price: product.productPrice
+                };
                 product.cartQuantity += 1;
                 $scope.total += product.price;
                 console.log(cartService.getCart());
@@ -442,18 +439,17 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
             }
         }
     }
-    
-    $scope.removeFromCart = function(product){
+
+    $scope.removeFromCart = function(product) {
         var userID = authService.getUserID();
         var userProdQuantityDictMap = cartService.getProductQuantityDict();
-        if(!userProdQuantityDictMap || !userProdQuantityDictMap[userID] || userProdQuantityDictMap[userID][product._id]['cartQuantity'] == 0 || product.cartQuantity == 0){
+        if (!userProdQuantityDictMap || !userProdQuantityDictMap[userID] || userProdQuantityDictMap[userID][product._id]['cartQuantity'] == 0 || product.cartQuantity == 0) {
             msgService.setErrorMessage("Cannot remove item, item is not in cart!");
             $scope.toggleModal();
-        }
-        else{
+        } else {
             userProdQuantityDictMap[userID][product._id]['cartQuantity'] -= 1;
             cartService.setProductQuantityDict(userProdQuantityDictMap);
-            if(userProdQuantityDictMap[userID][product._id]['cartQuantity'] == 0){
+            if (userProdQuantityDictMap[userID][product._id]['cartQuantity'] == 0) {
                 cartService.removeFromCart(product._id);
                 $scope.total -= (product.price * product.quantity);
                 product.cartQuantity = 0;
@@ -471,8 +467,8 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         }
     };
 
-    $scope.removeAllQuantity = function(product){
-        userProdQuantityDictMap[authService.getUserID()][product._id]['cartQuantity'] -= userProdQuantityDictMap[authService.getUserID()][product._id]['cartQuantity']-1;
+    $scope.removeAllQuantity = function(product) {
+        userProdQuantityDictMap[authService.getUserID()][product._id]['cartQuantity'] -= userProdQuantityDictMap[authService.getUserID()][product._id]['cartQuantity'] - 1;
         cartService.setProductQuantityDict(userProdQuantityDictMap);
         $scope.removeFromCart(product);
     }
@@ -482,7 +478,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         $location.path('/cart');
     };
 
-    $scope.toggleModal = function(){
+    $scope.toggleModal = function() {
         $scope.showModal = !$scope.showModal;
     };
 
@@ -490,28 +486,27 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
         $location.path('/');
     };
 
-    $scope.checkout = function(){
+    $scope.checkout = function() {
         $(".modal-backdrop").hide();
-        $("body").attr("class","modal-close");
+        $("body").attr("class", "modal-close");
         var cart = cartService.getCart();
-        if(!cart || cart.length == 0){
+        if (!cart || cart.length == 0) {
             msgService.setErrorMessage("Your cart is empty, please add items before checkout!");
-        }
-        else{
+        } else {
             var purchaseObj = {};
             var time = new Date();
             purchaseObj['products'] = cart;
             purchaseObj['timestamp'] = time;
             purchaseObj['userID'] = authService.getUserID();
             purchaseObj['amount'] = $scope.total;
-            $http.post('/api/purchase',purchaseObj).then(function success(res){
+            $http.post('/api/purchase', purchaseObj).then(function success(res) {
                 console.log(res);
-                msgService.setSuccessMessage("Purchase completed! Purchase ID: "+res.data.purchaseID);
+                msgService.setSuccessMessage("Purchase completed! Purchase ID: " + res.data.purchaseID);
                 msgService.setErrorMessage("");
                 cartService.setCart([]);
                 cartService.setProductQuantityDict({});
                 $location.path('/');
-            },function error(err){
+            }, function error(err) {
                 console.log(err);
             });
         }
@@ -521,7 +516,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 // app.controller('cartCtrl',function($scope,$filter,$resource,$http,$location,authService,cartService,msgService){
 //     $scope.cart = [],$scope.total = 0;
 //     var userProdQuantityDictMap = {};
-    
+
 //     $scope.$watch(authService.getAuthenticated, function(auth) {
 //         $scope.authenticated = auth;
 //     });
@@ -594,7 +589,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter,$l
 //     };
 // });
 
-app.controller('historyCtrl',function($scope,$resource,$location,authService){
+app.controller('historyCtrl', function($scope, $resource, $location, authService) {
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -604,21 +599,20 @@ app.controller('historyCtrl',function($scope,$resource,$location,authService){
     });
 
     var User = $resource('/api/user');
-    User.get({},function(user){
-		if(user.userID){
-			authService.setUserID(user.userID);
-			$scope.authenticated = true;
-			authService.setAuthenticated(true);
-			if(user.admin){
-				$scope.admin = true;
-				authService.setIsAdmin(true);
+    User.get({}, function(user) {
+        if (user.userID) {
+            authService.setUserID(user.userID);
+            $scope.authenticated = true;
+            authService.setAuthenticated(true);
+            if (user.admin) {
+                $scope.admin = true;
+                authService.setIsAdmin(true);
             }
-            var Purchase = $resource('/api/purchase/user/'+user.userID);
-            Purchase.query({},function(purchases){
+            var Purchase = $resource('/api/purchase/user/' + user.userID);
+            Purchase.query({}, function(purchases) {
                 $scope.purchases = purchases;
             });
-        }
-        else{
+        } else {
             $location.path('/login');
         }
     });
@@ -626,13 +620,13 @@ app.controller('historyCtrl',function($scope,$resource,$location,authService){
         $location.path('/');
     };
 
-    $scope.viewPurchase = function(purchaseID){
-        $location.path('/view_purchase/'+purchaseID);
+    $scope.viewPurchase = function(purchaseID) {
+        $location.path('/view_purchase/' + purchaseID);
     };
 
 });
 
-app.controller('viewPurchaseCtrl',function($scope,$resource,$location,$routeParams,authService){
+app.controller('viewPurchaseCtrl', function($scope, $resource, $location, $routeParams, authService) {
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -642,21 +636,20 @@ app.controller('viewPurchaseCtrl',function($scope,$resource,$location,$routePara
     });
 
     var User = $resource('/api/user');
-    User.get({},function(user){
-		if(user.userID){
-			authService.setUserID(user.userID);
-			$scope.authenticated = true;
-			authService.setAuthenticated(true);
-			if(user.admin){
-				$scope.admin = true;
-				authService.setIsAdmin(true);
+    User.get({}, function(user) {
+        if (user.userID) {
+            authService.setUserID(user.userID);
+            $scope.authenticated = true;
+            authService.setAuthenticated(true);
+            if (user.admin) {
+                $scope.admin = true;
+                authService.setIsAdmin(true);
             }
             var Purchase = $resource('/api/purchase/:purchaseID');
-            Purchase.get({'purchaseID': $routeParams.purchaseID},function(purchase){
+            Purchase.get({ 'purchaseID': $routeParams.purchaseID }, function(purchase) {
                 $scope.purchase = purchase;
             });
-        }
-        else{
+        } else {
             $location.path('/login');
         }
     });
@@ -787,42 +780,42 @@ app.factory('cartService', function() {
     }
 });
 
-app.directive('modal', function () {
+app.directive('modal', function() {
     return {
-      template: '<div class="modal fade">' + 
-          '<div class="modal-dialog">' + 
-            '<div class="modal-content">' + 
-              '<div class="modal-header">' + 
-                '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' + 
-                '<h4 class="modal-title">Error</h4>' + 
-              '</div>' + 
-              '<div class="modal-body" ng-transclude></div>' + 
-            '</div>' + 
-          '</div>' + 
-        '</div>',
-      restrict: 'E',
-      transclude: true,
-      replace:true,
-      scope:true,
-      link: function postLink(scope, element, attrs) {
-          scope.$watch(attrs.visible, function(value){
-          if(value == true)
-            $(element).modal('show');
-          else
-            $(element).modal('hide');
-        });
+        template: '<div class="modal fade">' +
+            '<div class="modal-dialog">' +
+            '<div class="modal-content">' +
+            '<div class="modal-header">' +
+            '<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>' +
+            '<h4 class="modal-title">Error</h4>' +
+            '</div>' +
+            '<div class="modal-body" ng-transclude></div>' +
+            '</div>' +
+            '</div>' +
+            '</div>',
+        restrict: 'E',
+        transclude: true,
+        replace: true,
+        scope: true,
+        link: function postLink(scope, element, attrs) {
+            scope.$watch(attrs.visible, function(value) {
+                if (value == true)
+                    $(element).modal('show');
+                else
+                    $(element).modal('hide');
+            });
 
-        $(element).on('shown.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = true;
-          });
-        });
+            $(element).on('shown.bs.modal', function() {
+                scope.$apply(function() {
+                    scope.$parent[attrs.visible] = true;
+                });
+            });
 
-        $(element).on('hidden.bs.modal', function(){
-          scope.$apply(function(){
-            scope.$parent[attrs.visible] = false;
-          });
-        });
-      }
+            $(element).on('hidden.bs.modal', function() {
+                scope.$apply(function() {
+                    scope.$parent[attrs.visible] = false;
+                });
+            });
+        }
     };
-  });
+});

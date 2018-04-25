@@ -1,32 +1,44 @@
+<style type="text/css">
+    #maintable td.black {
+        color: black;
+    }
+    
+    #maintable td.blue {
+        color: #00F;
+    }
+</style>
 <h3>Your cart</h3>
-<table class="table table-bordered">
+<table class="table table-bordered" id="maintable">
     <thead>
-      <tr>
-        <th scope="col">S.No</th>
-        <th scope="col">Product Name</th>
-        <th scope="col">Quantity</th>
-        <th scope="col">Price</th>
-        <th scope="col">Amount</th>
-        <th scope="col">Remove</th>
-      </tr>
+        <tr>
+            <th scope="col" style="color:black">S.No</th>
+            <th scope="col" style="color:black">Product Name</th>
+            <th scope="col" style="color:black">Quantity</th>
+            <th scope="col" style="color:black">Price</th>
+            <th scope="col" style="color:black">Amount</th>
+            <th scope="col" style="color:black">Remove</th>
+        </tr>
     </thead>
     <tbody>
-      <tr ng-repeat="product in cart[0].products">
-         <td>{{$index + 1}}</td>
-         <td>{{product.productName}}</td>
-         <td><button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger" ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button> </td>
-         <td>${{product.price | number:2}}</td>
-         <td>${{(product.quantity * product.price) | number:2}}</td>
-         <td><btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span></td>
-      </tr>
+        <tr ng-repeat="product in cart[0].products">
+            <td class="black">{{$index + 1}}</td>
+            <td class="black">{{product.productName}}</td>
+            <td><button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold" class="black">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger"
+                    ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button> </td>
+            <td class="black"> ${{product.price | number:2}}</td>
+            <td class="black">${{(product.quantity * product.price) | number:2}}</td>
+            <td>
+                <btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span>
+            </td>
+        </tr>
     </tbody>
     <tfoot>
         <td colspan="3"></td>
-        <td>Total</td>
-        <td>${{total | number:2}}</td>
+        <td class="black">Total</td>
+        <td class="black">${{total | number:2}}</td>
         <td></td>
     </tfoot>
-  </table>
+</table>
 <div class="container">
     <div class="row">
         <div class="col-md-4">
@@ -38,28 +50,27 @@
     </div>
 </div>
 <modal visible="showModal">
-  {{error_message}}
+    {{error_message}}
 </modal>
 
 <!-- Modal -->
 <div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
+    <div class="modal-dialog">
 
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Confirm Checkout</h4>
-      </div>
-      <div class="modal-body">
-        <p>Are you sure you want to checkout?</p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-success" ng-click="checkout()">Yes</button>
-        <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
-      </div>
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Confirm Checkout</h4>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to checkout?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success" ng-click="checkout()">Yes</button>
+                <button type="button" class="btn btn-danger" data-dismiss="modal">No</button>
+            </div>
+        </div>
+
     </div>
-
-  </div>
 </div>
-
