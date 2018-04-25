@@ -38,7 +38,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <div class="w3l_offers" ng-controller="headerController">
             <a>Welcome {{username}}</a>
         </div>
-        <div class="w3l_search" ng-style = "{'visibility':purchaseHistory || !authenticated?'hidden':'visible'}">
+        <div class="w3l_search" ng-style = "{'visibility':!authenticated?'hidden':'visible'}">
             <input ng-model="query" type="text" name="Product" placeholder="Search a product..." required="">
         </div>
         <div style="margin-left: 20em" ng-style = "{'visibility':!authenticated?'hidden':'visible'}" class="product_list_header" ng-controller="productCtrl">

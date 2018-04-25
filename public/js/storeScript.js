@@ -45,6 +45,7 @@ app.controller('headerController', function($scope, $rootScope, $http, $resource
     var User = $resource('/api/user');
     User.get({}, function(user) {
         if (user.name) {
+            $rootScope.username = user.name;
             $scope.authenticated = true;
             authService.setAuthenticated(true);
             if (user.admin) {
