@@ -30,7 +30,6 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular-resource.min.js"></script>
     <script src="js/storeScript.js"></script>
     <script src="js/dirPagination.js"></script>
-
 </head>
 
 <body ng-app="groceryStore">
@@ -39,10 +38,8 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <div class="w3l_offers" ng-controller="headerController">
             <a>Welcome {{username}}</a>
         </div>
-        <div class="w3l_search">
-            <form action="#" method="post">
-                <input ng-model="query" type="text" name="Product" placeholder="Search a product..." required="">
-            </form>
+        <div class="w3l_search" ng-style = "{'visibility':purchaseHistory || !authenticated?'hidden':'visible'}">
+            <input ng-model="query" type="text" name="Product" placeholder="Search a product..." required="">
         </div>
         <div class="product_list_header" ng-controller="productCtrl">
             <form ng-submit="goToCart()" class="last">
@@ -138,6 +135,7 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
                 <!-- Collect the nav links, forms, and other content for toggling -->
                 <div class="collapse navbar-collapse" id="bs-megadropdown-tabs">
                     <ul class="nav navbar-nav nav_1" ng-init="">
+                        <li><a href="#" ng-click="value = '0'">All Products</a></li>
                         <li><a href="#" ng-click="value = '5'">Branded Foods</a></li>
                         <li><a href="#" ng-click="value = '4'">Households</a></li>
                         <li class="dropdown mega-dropdown active">

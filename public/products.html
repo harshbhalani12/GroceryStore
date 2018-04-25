@@ -1,17 +1,15 @@
 <div class="w3ls_w3l_banner_nav_right_grid">
     <h3>Browse Products</h3>
     
-    <p class="alert alert-success" ng-show="success_message" id="success_message">{{success_message}}</p>
     <div class="row">
         <div class="col-md-4">
         </div>
-        <div class="col-md-4">
+        <div class="col-md-4" style="text-align:center">
             <dir-pagination-controls [max-size="10" ] [direction-links="true" ] [boundary-links="true" ] [on-page-change="" ] [pagination-id="" ] [template-url="" ] [auto-hide="" ]>
             </dir-pagination-controls>
+            <p class="alert alert-success" ng-show="success_message" id="success_message">{{success_message}}</p>
         </div>
-        <div class="col-md-4">
-        </div>
-    </div>
+            </div>
     <div class="w3ls_w3l_banner_nav_right_grid1">
         <!-- <p>Value is {{value}}</p> -->
         <div dir-paginate="product in products | filter:query |filter: deletedFilter| filter:categoryFilter| itemsPerPage: 8" class="col-md-3 w3ls_w3l_banner_left productClass">

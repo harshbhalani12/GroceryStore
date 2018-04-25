@@ -1,10 +1,11 @@
 <div class="w3_login">
-		<!-- <span class='alert alert-success' ng-if="success_message">{{success_message}}</span>
-		<span class='alert alert-danger' ng-if="error_message">{{error_message}}</span> -->
+		
 		<h3>Login</h3>
 		<div class="w3_login_module">
 			<div class="module form-module">
-			  <div class="form">
+				<p style="margin-top: 1em;" class='alert alert-danger' ng-show="error_message">{{error_message}}</p>
+				<p style="margin-top: 1em;" class='alert alert-success' ng-show="success_message && !error_message">{{success_message}}</p>
+				<div class="form">
 					<h2>Login to your account</h2>
 					<form ng-submit="login()" method="post">
 						<input type="email" name="Email" placeholder="Email" required=" " ng-model="user.email">

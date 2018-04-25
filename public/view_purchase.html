@@ -20,12 +20,21 @@
         </tr>
     </thead>
     <tbody>
+<<<<<<< Updated upstream
         <tr ng-repeat="product in purchase.products">
             <td class="black">{{$index + 1}}</td>
             <td class="black">{{product.productName}}</td>
             <td class="black">{{product.quantity}}</td>
             <td class="black">${{product.price | number:2}}</td>
             <td class="black">${{(product.quantity * product.price) | number:2}}</td>
+=======
+        <tr ng-repeat="product in purchase.products | filter:query">
+            <td>{{$index + 1}}</td>
+            <td>{{product.productName}}</td>
+            <td>{{product.quantity}}</td>
+            <td>${{product.price | number:2}}</td>
+            <td>${{(product.quantity * product.price) | number:2}}</td>
+>>>>>>> Stashed changes
         </tr>
     </tbody>
     <tfoot>

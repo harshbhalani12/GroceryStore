@@ -40,7 +40,8 @@ app.config(function($routeProvider) {
         });
 });
 
-app.controller('headerController', function($scope, $rootScope, $http, $resource, $location, authService, cartService) {
+app.controller('headerController', function($scope, $rootScope, $http, $resource, $location, authService,msgService,cartService) {
+    $rootScope.purchaseHistory = false;
     var User = $resource('/api/user');
     User.get({}, function(user) {
         if (user.name) {
@@ -63,6 +64,7 @@ app.controller('headerController', function($scope, $rootScope, $http, $resource
     $scope.signout = function() {
         $http.post('/auth/signout').then(function success(response) {
             authService.reset();
+            msgService.reset();
             $scope.authenticated = false;
             $scope.admin = false;
             $rootScope.username = '';
@@ -273,6 +275,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter, $reso
 
 app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $location, authService, cartService, msgService, $http) {
 
+    $rootScope.purchaseHistory = false;
     $scope.total = 0.00;
     $scope.showModal = false;
     var userProdQuantityDictMap = {};
@@ -357,8 +360,11 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $
         return !prod.isDeleted;
     }
 
-    $scope.categoryFilter = function(prod) {
-        if ($scope.value == null) {
+    $scope.categoryFilter = function(prod){
+        if($scope.value === '0'){
+            return true;
+        }
+        if($scope.value == null){
             return true;
         }
         if (prod.productCategory == $scope.value) {
@@ -513,83 +519,8 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $
     };
 });
 
-// app.controller('cartCtrl',function($scope,$filter,$resource,$http,$location,authService,cartService,msgService){
-//     $scope.cart = [],$scope.total = 0;
-//     var userProdQuantityDictMap = {};
-
-//     $scope.$watch(authService.getAuthenticated, function(auth) {
-//         $scope.authenticated = auth;
-//     });
-
-//     $scope.$watch(authService.getIsAdmin, function(admin) {
-//         $scope.admin = admin;
-//     });
-
-//     var User = $resource('/api/user');
-//     User.get({},function(user){
-// 		if(user.userID){
-// 			authService.setUserID(user.userID);
-// 			$scope.authenticated = true;
-// 			authService.setAuthenticated(true);
-// 			if(user.admin){
-// 				$scope.admin = true;
-// 				authService.setIsAdmin(true);
-// 			}
-// 			var Cart = $resource('/api/cart/'+user.userID);
-// 			Cart.query({},function(cart){
-//                 if(!cart || cart.length == 0){
-//                     console.log("Cart is empty!");
-//                 }
-//                 else{
-//                     $scope.cart = cart;
-//                     cartService.setCart(cart);
-//                     for(var i = 0; i < cart[0].products.length; i++){
-//                         $scope.total += cart[0].products[i].quantity * cart[0].products[i].price;
-//                     }
-//                 }
-// 			});
-// 		}
-// 		else{
-// 			$location.path('/login');
-// 		}
-//     });
-
-//     $scope.backToProducts = function() {
-//         $location.path('/');
-//     };
-
-
-
-//     $scope.checkout = function(){
-//         $(".modal-backdrop").hide();
-//         $("body").attr("class","modal-close");
-//         var cart = cartService.getCart();
-//         if(!cart || cart.length == 0){
-//             msgService.setErrorMessage("Your cart is empty, please add items before checkout!");
-//         }
-//         else{
-//             var purchaseObj = {};
-//             var productArr = cart[0].products;
-//             var time = new Date();
-//             purchaseObj['products'] = productArr;
-//             purchaseObj['timestamp'] = time;
-//             purchaseObj['userID'] = authService.getUserID();
-//             purchaseObj['amount'] = $scope.total;
-//             $http.post('/api/purchase',purchaseObj).then(function success(res){
-//                 console.log(res);
-//                 msgService.setSuccessMessage("Purchase completed! Purchase ID: "+res.data.purchaseID);
-//                 msgService.setErrorMessage("");
-//                 cartService.setCart([]);
-//                 cartService.setProductQuantityDict({});
-//                 $location.path('/');
-//             },function error(err){
-//                 console.log(err);
-//             });
-//         }
-//     };
-// });
-
-app.controller('historyCtrl', function($scope, $resource, $location, authService) {
+app.controller('historyCtrl',function($scope,$rootScope,$resource,$location,authService){
+    $rootScope.purchaseHistory = true;
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
@@ -626,7 +557,8 @@ app.controller('historyCtrl', function($scope, $resource, $location, authService
 
 });
 
-app.controller('viewPurchaseCtrl', function($scope, $resource, $location, $routeParams, authService) {
+app.controller('viewPurchaseCtrl',function($scope,$rootScope,$resource,$location,$routeParams,authService){
+    $rootScope.purchaseHistory = false;
     $scope.$watch(authService.getAuthenticated, function(auth) {
         $scope.authenticated = auth;
     });
