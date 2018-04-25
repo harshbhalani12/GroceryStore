@@ -92,6 +92,7 @@ app.controller('authController', function($scope, $rootScope, $http, $location, 
                 msgService.reset();
                 $rootScope.username = response.data.name;
                 $rootScope.authenticated = true;
+                $rootScope.category = 'Browse Products';
                 $location.path('/');
             } else {
                 $scope.error_message = response.data.message;
@@ -366,13 +367,16 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $
     }
 
     $scope.categoryFilter = function(prod){
+        var categories = ['Browse Products','Veggies & Fruits','Beverages','Bread & Bakery' ,'House Holds','Branded Foods'];
         if($scope.value === '0'){
+            $rootScope.category = "Browse Products";
             return true;
         }
         if($scope.value == null){
             return true;
         }
         if (prod.productCategory == $scope.value) {
+            $rootScope.category = categories[$scope.value];
             console.log(true);
             return true;
         } else {
