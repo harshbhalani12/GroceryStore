@@ -68,6 +68,7 @@ app.controller('headerController', function($scope, $rootScope, $http, $resource
             $scope.authenticated = false;
             $scope.admin = false;
             $rootScope.username = '';
+            $rootScope.authenticated = false;
             $location.path('/login');
         });
     };
@@ -90,6 +91,7 @@ app.controller('authController', function($scope, $rootScope, $http, $location, 
                 authService.setIsAdmin(response.data.isAdmin);
                 msgService.reset();
                 $rootScope.username = response.data.name;
+                $rootScope.authenticated = true;
                 $location.path('/');
             } else {
                 $scope.error_message = response.data.message;
@@ -179,6 +181,7 @@ app.controller('manageProductsCtrl', function($scope, $resource, $location, auth
         if (user.name) {
             $scope.authenticated = true;
             authService.setAuthenticated(true);
+            $rootScope.authenticated = true;
             if (user.admin) {
                 $scope.admin = true;
                 authService.setIsAdmin(true);
@@ -233,6 +236,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter, $reso
         if (user.name) {
             $scope.authenticated = true;
             authService.setAuthenticated(true);
+            $rootScope.authenticated = true;
             if (user.admin) {
                 $scope.admin = true;
                 authService.setIsAdmin(true);
@@ -298,6 +302,7 @@ app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $
             authService.setUserID(user.userID);
             $scope.authenticated = true;
             authService.setAuthenticated(true);
+            $rootScope.authenticated = true;
             if (user.admin) {
                 $scope.admin = true;
                 authService.setIsAdmin(true);
@@ -535,6 +540,7 @@ app.controller('historyCtrl',function($scope,$rootScope,$resource,$location,auth
             authService.setUserID(user.userID);
             $scope.authenticated = true;
             authService.setAuthenticated(true);
+            $rootScope.authenticated = true;
             if (user.admin) {
                 $scope.admin = true;
                 authService.setIsAdmin(true);
@@ -570,6 +576,7 @@ app.controller('viewPurchaseCtrl',function($scope,$rootScope,$resource,$location
     var User = $resource('/api/user');
     User.get({}, function(user) {
         if (user.userID) {
+            $rootScope.authenticated = true;
             authService.setUserID(user.userID);
             $scope.authenticated = true;
             authService.setAuthenticated(true);

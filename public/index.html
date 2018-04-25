@@ -41,14 +41,14 @@ Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, Sony
         <div class="w3l_search" ng-style = "{'visibility':purchaseHistory || !authenticated?'hidden':'visible'}">
             <input ng-model="query" type="text" name="Product" placeholder="Search a product..." required="">
         </div>
-        <div class="product_list_header" ng-controller="productCtrl">
+        <div style="margin-left: 20em" ng-style = "{'visibility':!authenticated?'hidden':'visible'}" class="product_list_header" ng-controller="productCtrl">
             <form ng-submit="goToCart()" class="last">
                 <fieldset>
                     <input type="submit" name="submit" value="View your cart" class="button" />
                 </fieldset>
             </form>
         </div>
-        <div class="w3l_header_right" ng-controller="headerController">
+        <div style="float: right" class="w3l_header_right" ng-controller="headerController">
             <ul>
                 <li class="dropdown profile_details_drop">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user" aria-hidden="true"></i><span class="caret"></span></a>
