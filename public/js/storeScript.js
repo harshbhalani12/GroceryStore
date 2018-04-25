@@ -64,12 +64,12 @@ app.controller('headerController', function($scope, $rootScope, $http, $resource
 
     $scope.signout = function() {
         $http.post('/auth/signout').then(function success(response) {
+            $rootScope.authenticated = false;
             authService.reset();
             msgService.reset();
             $scope.authenticated = false;
             $scope.admin = false;
             $rootScope.username = '';
-            $rootScope.authenticated = false;
             $location.path('/login');
         });
     };
