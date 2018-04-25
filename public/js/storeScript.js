@@ -176,7 +176,7 @@ app.controller('authController', function($scope, $rootScope, $http, $location, 
     }
 });
 
-app.controller('manageProductsCtrl', function($scope, $resource, $location, authService) {
+app.controller('manageProductsCtrl', function($scope,$rootScope, $resource, $location, authService) {
 
     var User = $resource('/api/user');
     User.get({}, function(user) {
@@ -187,20 +187,8 @@ app.controller('manageProductsCtrl', function($scope, $resource, $location, auth
             if (user.admin) {
                 $scope.admin = true;
                 authService.setIsAdmin(true);
-                $scope.data = {
-                    operations: [
-                        { id: '1', name: 'Add' },
-                        { id: '2', name: 'Update' },
-                        { id: '3', name: 'Delete' }
-                    ],
-                    categories: [
-                        { id: '1', name: 'Veggies & Fruits' },
-                        { id: '2', name: 'Beverages' },
-                        { id: '3', name: 'Bread & Bakery' },
-                        { id: '4', name: 'House Holds' },
-                        { id: '5', name: 'Branded Foods' }
-                    ]
-                };
+                $scope.categories=
+                        ['Veggies & Fruits','Beverages','Bread & Bakery','House Holds','Branded Foods'];
             } else {
                 $location.path('/login');
             }

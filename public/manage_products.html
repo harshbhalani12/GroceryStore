@@ -11,9 +11,10 @@
                                 <option value="" selected>Select Action</option>
                         </select><br/> -->
                     <input id="prod" type="text" name="productName" class="form-control" placeholder="Product Name" required=" " ng-model="productName">
-
-                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory" ng-options="option.name for option in data.categories track by option.id">
+                    
+                    <select id="drop2" class="form-control" required=" " ng-model="productCategory" name="productCategory">
                             <option value="" selected>Select Category</option>
+                            <option ng-repeat="category in categories" value="{{$index + 1}}">{{category}}</option>
                         </select><br/>
 
                     <label for="productImg" style="font-weight: normal; font-size: 0.9em">Product Photo</label>
