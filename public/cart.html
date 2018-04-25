@@ -8,7 +8,7 @@
     }
 </style>
 <h3>Your cart</h3>
-<p class="alert alert-success">{{success_message}}</p>
+<p ng-if="success_message" class="alert alert-success">{{success_message}}</p>
 <table class="table table-bordered" id="maintable">
     <thead>
         <tr>
@@ -24,12 +24,12 @@
         <tr ng-repeat="product in cart[0].products | filter:query">
             <td class="black">{{$index + 1}}</td>
             <td class="black">{{product.productName}}</td>
-            <td><button class="btn btn-info" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold" class="black">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger"
-                    ng-click="removeFromCart(product)"><span class="glyphicon glyphicon-minus"></span></button> </td>
+            <td><button class="btn btn-info" ng-if="!success_message" ng-click="addToCart(product)"><span class="glyphicon glyphicon-plus"></span></button>&nbsp;&nbsp;<span style="font-weight:bold" class="black">{{product.quantity}}</span>&nbsp;&nbsp;<button class="btn btn-danger"
+                    ng-click="removeFromCart(product)" ng-if="!success_message"><span class="glyphicon glyphicon-minus"></span></button> </td>
             <td class="black"> ${{product.price | number:2}}</td>
             <td class="black">${{(product.quantity * product.price) | number:2}}</td>
             <td>
-                <btn class="btn btn-danger" ng-click="removeAllQuantity(product)">Remove from Cart</span>
+                <btn class="btn btn-danger" ng-if="!success_message" ng-click="removeAllQuantity(product)">Remove from Cart</span>
             </td>
         </tr>
     </tbody>

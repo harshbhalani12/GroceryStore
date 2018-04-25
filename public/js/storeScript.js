@@ -281,6 +281,7 @@ app.controller('updateProductsCtrl', function($scope, $rootScope, $filter, $reso
 
 app.controller('productCtrl', function($scope, $rootScope, $resource, $filter, $location, authService, cartService, msgService, $http) {
 
+    msgService.reset();
     $rootScope.purchaseHistory = false;
     $scope.total = 0.00;
     $scope.showModal = false;
